@@ -299,6 +299,11 @@
 
   /* barra inferior fixa no celular */
   footer .n{letter-spacing:0 !important;text-transform:none !important}
+  .pix-note{font-size:.88rem;color:var(--muted);margin:-2px 0 12px}
+  .pix-key{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 10px;background:var(--tile);border:1px dashed var(--gold);padding:10px 12px;margin-bottom:14px}
+  .pix-key span{width:100%;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .pix-key b{font-size:1rem;color:var(--olive-900);font-weight:600;word-break:break-all}
+  .pix-key button{font:600 .7rem var(--sans);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--olive-700);background:transparent;color:var(--olive-900);padding:7px 10px;cursor:pointer}
   .tabbar{display:none}
   @media (max-width:760px){
     .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;top:auto;left:0;right:0;bottom:0;z-index:40;background:var(--olive-900);border:none;backdrop-filter:none;
@@ -532,6 +537,8 @@
 
     <div id="p-pix">
       <div class="qr" id="qr"></div>
+      <p class="pix-note" id="pix-note"></p>
+      <div class="pix-key"><span>Chave PIX (e-mail)</span><b id="pix-key"></b><button type="button" id="copy-key">Copiar chave</button></div>
       <div class="m-acts">
         <button class="btn btn-solid" id="m-copy" type="button">Copiar código PIX</button>
         <a class="btn btn-line" id="m-wa" target="_blank" rel="noopener">Avisar os noivos</a>
@@ -801,10 +808,10 @@ function refresh(){
   // PIX copia e cola
   const q = $("qr"); q.innerHTML = ""; payload = "";
   if (!CONFIG.pixChave) q.innerHTML = '<p class="soon">PIX em breve.</p>';
-  else if (!v) q.innerHTML = '<p class="soon">Digite o valor acima para gerar o código PIX.</p>';
-  else { payload = pix(v);
+  else { payload = pix(v);   // sem valor = mesmo código do QR oficial (o convidado digita o valor no banco)
     if (window.QRCode) new QRCode(q, {text:payload, width:188, height:188, colorDark:"#2c361a", colorLight:"#ffffff", correctLevel:QRCode.CorrectLevel.M});
-    else q.innerHTML = '<img src="pix-qr.jpg" alt="QR Code PIX" style="width:188px;height:auto"><p class="soon" style="padding:4px 0 0;font-size:.75rem">Ao ler este QR, digite o valor de ' + brl(v) + '</p>'; }
+    else q.innerHTML = '<img src="pix-qr.jpg" alt="QR Code PIX" style="width:188px;height:auto">' + (v ? '<p class="soon" style="padding:4px 0 0;font-size:.75rem">Ao ler este QR, digite o valor de ' + brl(v) + '</p>' : ''); }
+  $("pix-note").textContent = v ? `O código já vai com o valor de ${brl(v)}.` : "Sem valor definido: você digita o valor no app do banco.";
   $("m-copy").toggleAttribute("disabled", !payload);
   $("m-wa").href = wa(`💚 Oi, Pedro & Andreza! Acabei de enviar o presente "${cur.nome}"${v ? " (" + brl(v) + ")" : ""} pelo PIX. Felicidades!`);
   // Cartão
@@ -826,6 +833,12 @@ function openGift(g){
   if (!g.valor) setTimeout(() => $("m-in").focus(), 300);
 }
 $("m-in").addEventListener("input", refresh);
+$("pix-key").textContent = CONFIG.pixChave;
+$("copy-key").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(CONFIG.pixChave); }
+  catch(_){ const t=document.createElement("textarea"); t.value=CONFIG.pixChave; document.body.appendChild(t); t.select(); try{document.execCommand("copy")}catch(__){} t.remove(); }
+  $("copy-key").textContent = "Copiada ✓"; toast("Chave PIX copiada!"); setTimeout(() => $("copy-key").textContent = "Copiar chave", 2500);
+});
 $("m-copy").addEventListener("click", async () => {
   if (!payload) return;
   let ok = false;
