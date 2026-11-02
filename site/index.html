@@ -418,7 +418,7 @@
     <div class="head reveal">
       <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg></div><p class="num">Parte 2 de 4</p>
       <h2>Confirme sua <em>presença</em></h2>
-      <p>Preencha abaixo — sua confirmação chega direto no nosso WhatsApp.</p>
+      <p>Preencha seu nome e toque em enviar. Leva menos de 1 minuto!</p>
     </div>
     <div class="form reveal">
       <form id="rsvp" novalidate>
@@ -428,23 +428,14 @@
         </div>
         <div class="fld"><label for="f-nome">Nome completo</label><input id="f-nome" type="text" placeholder="Seu nome" autocomplete="name"></div>
         <p class="err" id="err" hidden>Por favor, escreva seu nome.</p>
-        <div id="qtd">
-          <div class="pair">
-            <div class="fld"><label>Adultos (com você)</label>
-              <div class="step" data-min="1" data-max="10"><button type="button" data-d="-1" aria-label="menos">−</button><output id="f-ad">1</output><button type="button" data-d="1" aria-label="mais">+</button></div></div>
-            <div class="fld"><label>Crianças</label>
-              <div class="step" data-min="0" data-max="10"><button type="button" data-d="-1" aria-label="menos">−</button><output id="f-cr">0</output><button type="button" data-d="1" aria-label="mais">+</button></div></div>
-          </div>
-          <div class="fld"><label for="f-ac">Acompanhantes (opcional)</label><input id="f-ac" type="text" placeholder="Nomes de quem vem com você"></div>
-        </div>
         <div class="fld"><label for="f-msg">Recado para os noivos (opcional)</label><textarea id="f-msg" rows="2" placeholder="Deixe uma mensagem carinhosa"></textarea></div>
-        <button class="btn btn-cream full" type="submit">Enviar confirmação</button>
+        <button class="btn btn-cream full" type="submit" id="rsvp-btn">Enviar confirmação</button>
         <p class="note" id="prazo" hidden></p>
       </form>
       <div class="thanks" id="thanks" hidden>
         <p class="t" id="thanks-t">Obrigado!</p>
-        <p>Abrimos o WhatsApp com sua mensagem — é só tocar em enviar.</p>
-        <a class="btn btn-cream" id="wa-again" target="_blank" rel="noopener">Abrir WhatsApp de novo</a>
+        <p id="thanks-p">Sua resposta foi registrada.</p>
+        <a class="btn btn-cream" id="wa-again" target="_blank" rel="noopener" hidden>Avisar também pelo WhatsApp</a>
         <p style="margin-top:16px"><a href="#" id="again" style="font-size:.74rem;color:var(--olive-300)">Enviar outra confirmação</a></p>
       </div>
     </div>
@@ -579,6 +570,7 @@ const CONFIG = {
   pixCep:     "01323050",
   cartaoLink: "",   // (não usado — pagamentos pela InfinitePay)                 // "Seu link" do Mercado Pago (quem paga digita o valor). Ex.: "https://link.mercadopago.com.br/pedroeandreza"
   checkoutAPI: "/api/checkout",   // checkout InfinitePay com valor já preenchido (precisa da InfiniteTag na Vercel)
+  planilhaURL: "",                // endereço do Apps Script da planilha (termina em /exec)
   prazoRSVP:  ""                  // ex.: "17 de março de 2027"
 };
 
@@ -727,29 +719,39 @@ const pic = key => `<svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60
 /* ---------------- RSVP ---------------- */
 let vai = "sim";
 $("seg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; vai = b.dataset.v;
-  document.querySelectorAll("#seg button").forEach(x => x.classList.toggle("on", x === b)); $("qtd").hidden = vai !== "sim"; });
-document.querySelectorAll(".step").forEach(st => { const o = st.querySelector("output");
-  st.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return;
-    o.textContent = Math.min(+st.dataset.max, Math.max(+st.dataset.min, +o.textContent + +b.dataset.d)); }); });
+  document.querySelectorAll("#seg button").forEach(x => x.classList.toggle("on", x === b)); });
 if (CONFIG.prazoRSVP){ $("prazo").hidden = false; $("prazo").textContent = "Por favor, confirme até " + CONFIG.prazoRSVP + "."; }
-$("rsvp").addEventListener("submit", e => {
+$("rsvp").addEventListener("submit", async e => {
   e.preventDefault();
   const nome = $("f-nome").value.trim(); if (!nome){ $("err").hidden = false; $("f-nome").focus(); return; } $("err").hidden = true;
-  const msg = $("f-msg").value.trim(); let t;
-  if (vai === "sim"){
-    const ac = $("f-ac").value.trim();
-    t = `💚 *Confirmação de presença – Casamento Pedro & Andreza*\n\nNome: ${nome}\nPresença: SIM, estarei lá!\nAdultos: ${$("f-ad").textContent}\nCrianças: ${$("f-cr").textContent}` +
-        (ac ? `\nAcompanhantes: ${ac}` : "") + (msg ? `\n\nRecado: ${msg}` : "");
-    $("thanks-t").textContent = "Que alegria!"; leaves(40);
-  } else {
-    t = `*Casamento Pedro & Andreza*\n\nNome: ${nome}\nPresença: infelizmente não poderei ir 😢` + (msg ? `\n\nRecado: ${msg}` : "");
-    $("thanks-t").textContent = "Obrigado por avisar!";
+  const msg = $("f-msg").value.trim();
+  const presenca = vai === "sim" ? "Sim" : "Não";
+  const btn = $("rsvp-btn"); btn.textContent = "Enviando…"; btn.setAttribute("disabled","");
+  let salvo = false;
+  if (CONFIG.planilhaURL){
+    try {
+      await fetch(CONFIG.planilhaURL, { method:"POST", mode:"no-cors",
+        body: new URLSearchParams({ nome, presenca, recado: msg, origem: location.host }) });
+      salvo = true;
+    } catch(_){}
   }
-  const url = wa(t); $("wa-again").href = url;
-  try { window.open(url, "_blank", "noopener"); } catch(_){}
+  btn.textContent = "Enviar confirmação"; btn.removeAttribute("disabled");
+  const t = vai === "sim"
+    ? `💚 *Confirmação de presença – Casamento Pedro & Andreza*\n\nNome: ${nome}\nPresença: SIM, estarei lá!` + (msg ? `\n\nRecado: ${msg}` : "")
+    : `*Casamento Pedro & Andreza*\n\nNome: ${nome}\nPresença: infelizmente não poderei ir 😢` + (msg ? `\n\nRecado: ${msg}` : "");
+  $("wa-again").href = wa(t);
+  if (salvo){
+    $("thanks-p").textContent = vai === "sim" ? "Sua presença foi confirmada. Até lá!" : "Sua resposta foi registrada. Sentiremos sua falta!";
+    $("wa-again").hidden = !CONFIG.whatsapp;
+  } else {
+    $("thanks-p").textContent = "Toque abaixo para enviar sua resposta pelo WhatsApp.";
+    $("wa-again").hidden = false;
+  }
+  $("thanks-t").textContent = vai === "sim" ? "Que alegria!" : "Obrigado por avisar!";
+  if (vai === "sim") leaves(40);
   $("rsvp").hidden = true; $("thanks").hidden = false;
 });
-$("again").addEventListener("click", e => { e.preventDefault(); $("rsvp").reset(); $("f-ad").textContent = "1"; $("f-cr").textContent = "0"; $("rsvp").hidden = false; $("thanks").hidden = true; });
+$("again").addEventListener("click", e => { e.preventDefault(); $("rsvp").reset(); $("rsvp").hidden = false; $("thanks").hidden = true; });
 
 /* ---------------- PIX (BR Code) ---------------- */
 const clean = (s,n) => s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9 ]/g,"").toUpperCase().slice(0,n);
