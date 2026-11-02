@@ -542,13 +542,13 @@
 
     <div id="p-cartao" hidden>
       <div class="card-box">
-        <div class="cards"><span>Crédito</span><span>Parcelado</span><span>Débito</span></div>
+        <div class="cards"><span>Crédito</span><span>Parcelado até 12x</span><span>Sem cadastro</span></div>
         <p id="c-text"></p>
         <div class="m-acts">
           <a class="btn btn-solid" id="c-go" target="_blank" rel="noopener">Pagar com cartão</a>
           <a class="btn btn-line" id="c-wa" target="_blank" rel="noopener">Avisar os noivos</a>
         </div>
-        <p class="m-help">Pagamento seguro pelo Mercado Pago. Não precisa ter conta.</p>
+        <p class="m-help" id="c-help">Pagamento seguro, crédito à vista ou parcelado em até 12x.</p>
       </div>
     </div>
   </div>
@@ -570,6 +570,7 @@ const CONFIG = {
   pixNome:    "PEDRO E ANDREZA",  // nome do recebedor (sem acento, até 25 letras)
   pixCidade:  "CAMBE",
   cartaoLink: "https://link.mercadopago.com.br/andrezapedro",                 // "Seu link" do Mercado Pago (quem paga digita o valor). Ex.: "https://link.mercadopago.com.br/pedroeandreza"
+  checkoutAPI: "/api/checkout",   // checkout InfinitePay com valor já preenchido (precisa da InfiniteTag na Vercel)
   prazoRSVP:  ""                  // ex.: "17 de março de 2027"
 };
 
@@ -809,7 +810,11 @@ function refresh(){
   $("m-key").innerHTML = CONFIG.pixChave ? `Chave PIX: <b>${CONFIG.pixChave}</b> · ${CONFIG.pixNome}` : "";
   $("m-copy").disabled = !payload;
   // Cartão
-  if (CONFIG.cartaoLink){
+  if (CONFIG.checkoutAPI && location.protocol.startsWith("http") && !/claude|claudeusercontent/.test(location.host)){
+    $("c-go").removeAttribute("href"); $("c-go").toggleAttribute("disabled", !v);
+    $("c-text").innerHTML = v ? `Você será levado à página de pagamento segura com o valor de <b>${brl(v)}</b> já preenchido. É só colocar os dados do cartão — <b>não precisa baixar nada nem criar conta</b>.`
+                              : `Digite o valor acima para continuar.`;
+  } else if (CONFIG.cartaoLink){
     $("c-go").href = CONFIG.cartaoLink; $("c-go").removeAttribute("disabled");
     $("c-text").innerHTML = v ? `Na página do Mercado Pago, <b>digite o valor ${brl(v)}</b> e escolha crédito à vista ou parcelado.`
                               : `Escolha o valor acima e digite o mesmo valor na página do Mercado Pago.`;
@@ -829,6 +834,22 @@ function openGift(g){
   if (!g.valor) setTimeout(() => $("m-in").focus(), 300);
 }
 $("m-in").addEventListener("input", refresh);
+$("c-go").addEventListener("click", async e => {
+  if ($("c-go").getAttribute("href")) return;            // modo link simples
+  e.preventDefault();
+  const v = val(); if (!v) return;
+  const b = $("c-go"), old = b.textContent; b.textContent = "Abrindo pagamento…"; b.setAttribute("disabled","");
+  try {
+    const r = await fetch(CONFIG.checkoutAPI, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({nome: cur.nome, valor: v})});
+    const d = await r.json();
+    if (d.url){ location.href = d.url; return; }
+    throw new Error(d.error || "erro");
+  } catch(_){
+    if (CONFIG.cartaoLink){ toast("Abrindo pagamento alternativo…"); location.href = CONFIG.cartaoLink; }
+    else toast("Não foi possível abrir o pagamento. Tente o PIX.");
+  } finally { b.textContent = old; b.removeAttribute("disabled"); }
+});
+if (/[?&]pago=1/.test(location.search)) setTimeout(() => { toast("Pagamento recebido! Muito obrigado pelo presente 💚"); leaves(50); }, 800);
 function closeModal(){ $("modal").hidden = true; document.body.style.overflow = ""; }
 $("m-x").onclick = closeModal;
 $("modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
