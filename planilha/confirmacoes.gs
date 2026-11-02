@@ -26,56 +26,13 @@ function planilha_() {
   return ss;
 }
 function saida_(obj) { return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON); }
-function norm_(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim(); }
+function norm_(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim(); }
 
-/* ---------------- montar a lista (rodar uma vez) ---------------- */
-function criarListaConvidados() {
-  const ss = planilha_();
-  let sh = ss.getSheetByName(ABA_CONV);
-  if (sh && sh.getLastRow() > 1) {
-    SpreadsheetApp.getUi && Logger.log("A aba Convidados já existe — nada foi apagado. Só o Resumo foi refeito.");
-  } else {
-    if (!sh) sh = ss.insertSheet(ABA_CONV, 0);
-    const cab = ["Código", "Convite", "Pessoa", "Resposta", "Respondido em", "Recado", "Link do convite"];
-    const linhas = [];
-    LISTA.forEach(([cod, convite, pessoas]) => pessoas.forEach((p, i) =>
-      linhas.push([cod, convite, p, PEND, "", "", i === 0 ? SITE + "/?c=" + cod : ""])));
-    sh.getRange(1, 1, 1, cab.length).setValues([cab]).setFontWeight("bold").setBackground("#3b4723").setFontColor("#f3eee2");
-    sh.getRange(2, 1, linhas.length, cab.length).setValues(linhas);
-    sh.setFrozenRows(1);
-    sh.setColumnWidth(1, 110); sh.setColumnWidth(2, 260); sh.setColumnWidth(3, 170); sh.setColumnWidth(4, 110);
-    sh.setColumnWidth(5, 130); sh.setColumnWidth(6, 260); sh.setColumnWidth(7, 330);
-    const rules = [
-      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo(VAI).setBackground("#d9e3c0").setRanges([sh.getRange("D2:D")]).build(),
-      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo(NAO).setBackground("#f3d9cf").setRanges([sh.getRange("D2:D")]).build(),
-      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo(PEND).setBackground("#f6efd9").setRanges([sh.getRange("D2:D")]).build()
-    ];
-    sh.setConditionalFormatRules(rules);
-    sh.getRange("D2:D").setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList([PEND, VAI, NAO], true).build());
-  }
-  resumo_(ss, true);
-}
-
+/* ---------------- resumo / aba de confirmações avulsas ---------------- */
 function resumo_(ss, refazer) {
   let r = ss.getSheetByName("Resumo");
   if (r && !refazer) return;
-  if (r) r.clear(); else r = ss.insertSheet("Resumo", 1);
-  const C = "'" + ABA_CONV + "'";
-  const linhas = [
-    ["Resumo do casamento", ""],
-    ["Pessoas convidadas", `=COUNTA(${C}!C2:C)`],
-    ["✅ Vão", `=COUNTIF(${C}!D2:D,"${VAI}")`],
-    ["❌ Não vão", `=COUNTIF(${C}!D2:D,"${NAO}")`],
-    ["⏳ Ainda não responderam", `=COUNTIF(${C}!D2:D,"${PEND}")`],
-    ["", ""],
-    ["Convites enviados (grupos)", `=COUNTUNIQUE(${C}!A2:A)`],
-    ["Confirmações sem link (aba Confirmações)", `=MAX(0,COUNTA('${ABA}'!B2:B))`]
-  ];
-  r.getRange(1, 1, linhas.length, 2).setValues(linhas.map(l => [l[0], ""]));
-  linhas.forEach((l, i) => { if (l[1]) r.getRange(i + 1, 2).setFormula(l[1]); });
-  r.getRange("A1").setFontWeight("bold").setFontSize(13);
-  r.getRange("B2:B8").setFontWeight("bold").setFontSize(12);
-  r.setColumnWidth(1, 320); r.setColumnWidth(2, 90);
+  if (!r) r = ss.insertSheet("Resumo");
   if (!ss.getSheetByName(ABA)) {
     const a = ss.insertSheet(ABA);
     a.appendRow(["Data/hora", "Nome", "Vai?", "Recado", "Respostas"]);
