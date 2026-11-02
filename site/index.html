@@ -510,6 +510,7 @@
 <footer>
   <p class="n">Pedro &amp; Andreza</p>
   <p>17 · 04 · 2027 — Cambé, Paraná</p>
+  <p style="opacity:.35;font-size:.55rem;margin-top:14px">v1435</p>
 </footer>
 
 <!-- MODAL -->
@@ -730,8 +731,13 @@ $("rsvp").addEventListener("submit", async e => {
   let salvo = false;
   if (CONFIG.planilhaURL){
     try {
-      const qs = new URLSearchParams({ nome, presenca, recado: msg, origem: location.host }).toString();
-      await fetch(CONFIG.planilhaURL + "?" + qs, { method:"GET", mode:"no-cors", cache:"no-store" });
+      const dados = { nome, presenca, recado: msg, origem: location.host };
+      const qs = new URLSearchParams(dados).toString();
+      // 1) beacon (POST) — o navegador garante o envio mesmo com redirecionamento do Google
+      let ok = false;
+      try { ok = navigator.sendBeacon && navigator.sendBeacon(CONFIG.planilhaURL, new URLSearchParams(dados)); } catch(_){}
+      // 2) se o beacon não estiver disponível, envia por imagem (GET)
+      if (!ok){ await new Promise(res => { const img = new Image(); img.onload = img.onerror = res; img.src = CONFIG.planilhaURL + "?" + qs + "&_=" + Date.now(); setTimeout(res, 4000); }); }
       salvo = true;
     } catch(_){}
   }
