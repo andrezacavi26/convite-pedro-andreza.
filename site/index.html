@@ -157,6 +157,12 @@
   @media (hover:none){.gift .go{opacity:1;transform:none}}
   @media (max-width:420px){.gifts{grid-template-columns:1fr 1fr}.gift{padding:24px 10px 20px}.gift h4{font-size:1.05rem}}
   .more{display:flex;justify-content:center;margin-top:28px}
+  .gift .pic{width:100%;aspect-ratio:4/3;background:radial-gradient(ellipse at 50% 70%,#f1f2e4 0%,#e3e6cd 100%);margin-bottom:14px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .gift .pic svg{width:86%;height:auto;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+  .gift:hover .pic svg{transform:scale(1.07) translateY(-2px)}
+  .gift{padding:14px 14px 22px !important}
+  .m-pic{width:100%;max-width:260px;aspect-ratio:4/3;margin:0 auto 12px;background:radial-gradient(ellipse at 50% 70%,#f1f2e4 0%,#e3e6cd 100%);display:flex;align-items:center;justify-content:center}
+  .m-pic svg{width:86%}
   .gift-foot{text-align:center;font-size:.84rem;color:var(--muted);margin-top:22px}
 
   /* ---------- STAY ---------- */
@@ -430,7 +436,7 @@
 <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-title">
   <div class="mbox">
     <button class="x" id="m-x" aria-label="Fechar">×</button>
-    <div class="m-ic"><svg id="m-icon"><use href="#i-casa"/></svg></div>
+    <div class="m-pic" id="m-pic"></div><div class="m-ic" id="m-ic"><svg><use href="#i-coracao"/></svg></div>
     <p class="m-title" id="m-title"></p>
     <p class="m-val" id="m-val"></p>
     <div class="m-free" id="m-free" hidden><span>R$</span><input id="m-in" type="number" min="1" step="1" inputmode="numeric" placeholder="0,00"></div>
@@ -476,6 +482,7 @@ const CONFIG = {
   prazoRSVP:  ""                  // ex.: "17 de março de 2027"
 };
 
+const ART_KEYS = ["panos", "lixeira", "retrato", "tapeteban", "utensilios", "limpeza", "planta", "temperos", "cesto", "tabua", "almofadas", "copos", "kitban", "escorredor", "xicaras", "potes", "varal", "manta", "abajur", "tacas", "facas", "travesseiros", "lampada", "sanduicheira", "chaleira", "toalhas", "lencol", "ferro", "pressao", "ferramentas", "cobertor", "faqueiro", "secador", "mixer", "ventilador", "blackout", "liquidificador", "edredom", "cafeteira", "cortinasala", "tapetesala", "espelho", "batedeira", "luminaria", "processador", "jantar", "aspirador", "panelas", "airfryer", "churrasqueira", "rack", "forno", "comoda", "microondas", "robo", "tv", "colchao", "geladeira", "sofa", "lavar"];
 const CATS = { cozinha:"Cozinha", sala:"Sala", quarto:"Quarto", banheiro:"Banheiro", lavanderia:"Lavanderia", casa:"Casa & jardim" };
 
 const PRESENTES = [
@@ -499,7 +506,7 @@ const PRESENTES = [
   ["cozinha","Forno elétrico",600], ["quarto","Cômoda",700], ["cozinha","Micro-ondas",750],
   ["lavanderia","Aspirador robô",850], ["sala","Cota para a Smart TV",900], ["quarto","Cota para o colchão",950],
   ["cozinha","Cota para a geladeira",1000], ["sala","Cota para o sofá",1000], ["lavanderia","Cota para a máquina de lavar",1000]
-].map(([cat,nome,valor]) => ({cat,nome,valor}));
+].map(([cat,nome,valor], i) => ({cat,nome,valor,art:ART_KEYS[i]}));
 
 // distância/tempo aproximados de carro até o Rancho Eventos
 const HOTEIS = [
@@ -544,6 +551,75 @@ function leaves(n){
     document.body.appendChild(l); setTimeout(()=>l.remove(),7500);
   }, i*70);
 }
+
+/* ---------------- ILUSTRAÇÕES DOS PRESENTES ---------------- */
+const O="#66763c", D="#3b4723", OL="#7f8f4a", C="#efe9db", B="#d8c6a3", W="#a7794f", WD="#8a6240", S="#c4c8bd", S2="#a9aea2", G="#b59a62", T="#c98b6b", K="#2f322a", K2="#45493d", L="#fffdf7", GL="#dfe7e4";
+const curt = c => `<rect x="22" y="22" width="76" height="58" fill="${C}"/><rect x="20" y="17" width="80" height="3" rx="1.5" fill="${W}"/><path d="M24 20h24q-7 30 3 60H24z" fill="${c}"/><path d="M96 20H72q7 30-3 60h27z" fill="${c}"/><path d="M34 22v56M86 22v56" stroke="#000" stroke-opacity=".08" stroke-width="2"/>`;
+const stack = (a,b,c,s) => `<rect x="30" y="64" width="60" height="16" rx="3" fill="${a}"/><rect x="30" y="70" width="60" height="2.5" fill="${s}"/><rect x="33" y="50" width="54" height="14" rx="3" fill="${b}"/><rect x="33" y="55" width="54" height="2.5" fill="${s}"/><rect x="36" y="38" width="48" height="12" rx="3" fill="${c}"/><rect x="36" y="42" width="48" height="2.5" fill="${s}"/>`;
+const blanket = (c,s) => `<rect x="26" y="46" width="68" height="34" rx="7" fill="${c}"/><path d="M26 60h68" stroke="${s}" stroke-width="3" opacity=".5"/><path d="M26 54q34 8 68 0" stroke="#fff" stroke-opacity=".25" stroke-width="2" fill="none"/><path d="M94 50v26M97 52v22" stroke="${s}" stroke-width="1.5" stroke-dasharray="2 2"/>`;
+const ART = {
+  panos: stack(B, L, C, T) + `<rect x="36" y="42" width="48" height="2.5" fill="${O}"/>`,
+  lixeira: `<rect x="45" y="36" width="30" height="44" rx="4" fill="${S}"/><rect x="43" y="30" width="34" height="8" rx="3" fill="${S2}"/><rect x="56" y="26" width="8" height="5" rx="2" fill="${S2}"/><rect x="50" y="40" width="3" height="34" rx="1.5" fill="#fff" opacity=".55"/><rect x="48" y="77" width="12" height="4" rx="1" fill="${K}"/>`,
+  retrato: `<rect x="38" y="24" width="44" height="56" rx="2" fill="${W}"/><rect x="44" y="30" width="32" height="44" fill="${C}"/><path d="M44 74l12-16 8 8 6-6 6 8v6z" fill="${O}"/><circle cx="68" cy="40" r="4" fill="${G}"/>`,
+  tapeteban: `<rect x="22" y="54" width="76" height="26" rx="13" fill="${O}"/><rect x="28" y="59" width="64" height="16" rx="8" fill="none" stroke="${C}" stroke-width="1.6" stroke-dasharray="3 3"/>`,
+  utensilios: `<rect x="50" y="22" width="4" height="34" fill="${W}"/><rect x="45" y="12" width="14" height="15" rx="4" fill="${O}"/><rect x="65" y="26" width="4" height="30" fill="${W}"/><ellipse cx="67" cy="21" rx="7" ry="9" fill="${D}"/><rect x="58" y="18" width="3" height="38" fill="${S2}"/><path d="M44 50h32l-3 30H47z" fill="${T}"/><rect x="44" y="50" width="32" height="4" fill="#b87a5c"/>`,
+  limpeza: `<path d="M28 52h36l-4 28H32z" fill="${O}"/><path d="M30 52q16-18 32 0" fill="none" stroke="${D}" stroke-width="2.5"/><rect x="70" y="44" width="20" height="36" rx="5" fill="${L}" stroke="${B}"/><rect x="74" y="35" width="11" height="10" fill="${T}"/><path d="M74 36h-9v4h9" fill="${T}"/><rect x="72" y="58" width="16" height="11" fill="${G}" opacity=".55"/>`,
+  planta: `<path d="M60 56C50 42 40 36 34 22c13 3 24 14 26 34z" fill="${O}"/><path d="M60 56c10-16 20-22 28-36-13 3-25 14-28 36z" fill="${D}"/><path d="M60 56c-3-16-1-30 2-44 4 14 3 28-2 44z" fill="${OL}"/><path d="M46 58h28l-4 22H50z" fill="${T}"/><rect x="44" y="54" width="32" height="6" rx="2" fill="#b87a5c"/>`,
+  temperos: `<rect x="58" y="22" width="4" height="56" fill="${W}"/><ellipse cx="60" cy="78" rx="32" ry="4" fill="${W}"/><ellipse cx="60" cy="56" rx="28" ry="3" fill="${W}"/>` + [32,44,68,80].map((x,i)=>`<rect x="${x}" y="60" width="10" height="17" rx="2" fill="${L}" stroke="${B}"/><rect x="${x}" y="57" width="10" height="4" rx="1" fill="${[O,T,G,D][i]}"/><rect x="${x+1.5}" y="68" width="7" height="8" fill="${[T,G,O,W][i]}" opacity=".6"/>`).join("") + [38,50,64,74].map((x,i)=>`<rect x="${x}" y="40" width="9" height="15" rx="2" fill="${L}" stroke="${B}"/><rect x="${x}" y="37" width="9" height="4" rx="1" fill="${[D,G,T,O][i]}"/>`).join(""),
+  cesto: `<path d="M42 40q8-11 18-3 10-8 18 3z" fill="${O}"/><path d="M36 40h48l-5 40H41z" fill="#c9a978"/><path d="M37 50h46M38 60h44M39 70h42" stroke="${W}" stroke-width="1.5"/><path d="M48 40l1 40M60 40v40M72 40l-1 40" stroke="${W}" stroke-width="1.2" opacity=".6"/>`,
+  tabua: `<rect x="24" y="50" width="62" height="30" rx="8" fill="${W}"/><rect x="84" y="60" width="14" height="10" rx="4" fill="${W}"/><circle cx="92" cy="65" r="2" fill="${C}"/><rect x="30" y="55" width="50" height="20" rx="5" fill="none" stroke="${WD}" opacity=".5"/><circle cx="46" cy="64" r="6.5" fill="${T}"/><path d="M46 57.5v-3" stroke="${O}" stroke-width="2"/><rect x="58" y="60" width="16" height="7" rx="3.5" fill="${OL}"/>`,
+  almofadas: `<rect x="24" y="40" width="42" height="40" rx="9" fill="${O}"/><path d="M30 60h30" stroke="${C}" stroke-dasharray="2 3" stroke-width="1.5"/><rect x="52" y="46" width="44" height="34" rx="9" fill="${B}"/><circle cx="74" cy="63" r="6" fill="none" stroke="${W}" stroke-width="1.5"/>`,
+  copos: [34,52,70].map(x=>`<path d="M${x} 38h16l-2 42H${x+2}z" fill="${GL}" stroke="${S2}"/><path d="M${x+1} 56h14l-1.4 22H${x+2.4}z" fill="#bfd3cf" opacity=".7"/><rect x="${x+3}" y="42" width="2" height="30" fill="#fff" opacity=".7"/>`).join(""),
+  kitban: `<rect x="38" y="46" width="20" height="34" rx="5" fill="${C}" stroke="${B}"/><rect x="45" y="37" width="6" height="10" fill="${S2}"/><path d="M50 39h9" stroke="${S2}" stroke-width="3"/><rect x="41" y="58" width="14" height="10" fill="${O}" opacity=".5"/><rect x="70" y="34" width="3" height="24" rx="1.5" fill="${T}"/><rect x="77" y="37" width="3" height="21" rx="1.5" fill="${G}"/><path d="M64 54h22l-2 26H66z" fill="${O}"/>`,
+  escorredor: `<circle cx="42" cy="52" r="17" fill="${L}" stroke="${B}"/><circle cx="54" cy="52" r="17" fill="${C}" stroke="${B}"/><circle cx="54" cy="52" r="10" fill="none" stroke="${O}" opacity=".5"/><path d="M74 50h16v10a8 8 0 0 1-16 0z" fill="${O}"/><rect x="24" y="62" width="72" height="18" rx="3" fill="none" stroke="${S2}" stroke-width="2.5"/><path d="M32 62v18M42 62v18M52 62v18M62 62v18M72 62v18M82 62v18" stroke="${S2}" stroke-width="1.5"/>`,
+  xicaras: `<ellipse cx="42" cy="78" rx="19" ry="3.5" fill="${C}" stroke="${B}"/><path d="M29 54h26v10a13 13 0 0 1-26 0z" fill="${L}" stroke="${B}"/><path d="M55 58a6 6 0 0 1 0 12" fill="none" stroke="${B}" stroke-width="3"/><rect x="29" y="58" width="26" height="3" fill="${O}"/><ellipse cx="80" cy="78" rx="19" ry="3.5" fill="${C}" stroke="${B}"/><path d="M67 54h26v10a13 13 0 0 1-26 0z" fill="${O}"/><path d="M93 58a6 6 0 0 1 0 12" fill="none" stroke="${O}" stroke-width="3"/><path d="M38 48q2-5 0-9M80 48q2-5 0-9" stroke="${S2}" stroke-width="1.5" fill="none"/>`,
+  potes: [[30,40,G],[52,30,T],[74,46,B]].map(([x,y,f])=>`<rect x="${x}" y="${y}" width="18" height="${80-y}" rx="3" fill="${L}" stroke="${B}"/><rect x="${x+2}" y="${y+12}" width="14" height="${66-y}" fill="${f}" opacity=".65"/><rect x="${x-1}" y="${y-5}" width="20" height="6" rx="2" fill="${D}"/>`).join(""),
+  varal: `<path d="M30 80l10-46M90 80L80 34" stroke="${S2}" stroke-width="3"/><rect x="26" y="32" width="68" height="3" rx="1.5" fill="${S2}"/><rect x="36" y="35" width="14" height="24" fill="${O}"/><path d="M54 35h18l4 6-5 2v18H59V43l-5-2z" fill="${T}"/><rect x="77" y="35" width="10" height="30" fill="${B}"/>`,
+  manta: blanket(OL, D),
+  cobertor: blanket(B, W),
+  abajur: `<ellipse cx="60" cy="78" rx="13" ry="3" fill="${D}"/><rect x="58" y="46" width="4" height="32" fill="${G}"/><path d="M42 48h36l-7-26H49z" fill="${C}" stroke="${B}"/><path d="M50 56q10 6 20 0" stroke="${G}" stroke-opacity=".5" fill="none"/>`,
+  tacas: [40,68].map(x=>`<path d="M${x-10} 26h20q0 24-10 26-10-2-10-26z" fill="#f2eef2" stroke="${S2}"/><path d="M${x-9} 38h18q-1 13-9 14-8-1-9-14z" fill="#7a2e3a"/><rect x="${x-1}" y="52" width="2" height="24" fill="${S2}"/><ellipse cx="${x}" cy="78" rx="9" ry="2.5" fill="${S2}"/>`).join(""),
+  facas: `<rect x="44" y="26" width="6" height="18" rx="2" fill="${K}" transform="rotate(-12 47 35)"/><rect x="54" y="22" width="6" height="20" rx="2" fill="${K}" transform="rotate(-8 57 32)"/><rect x="64" y="24" width="6" height="18" rx="2" fill="${K}" transform="rotate(-4 67 33)"/><path d="M38 46l34-8 10 42H40z" fill="${W}"/><path d="M40 46l32-8" stroke="${WD}" stroke-width="2"/>`,
+  travesseiros: `<rect x="22" y="48" width="52" height="30" rx="13" fill="${L}" stroke="${B}"/><rect x="46" y="40" width="52" height="30" rx="13" fill="${C}" stroke="${B}"/><path d="M52 55h40" stroke="${B}" stroke-dasharray="2 3"/>`,
+  lampada: `<path d="M60 14v-4M40 22l-3-3M80 22l3-3M34 40h-4M86 40h4" stroke="${G}" stroke-width="2.5" stroke-linecap="round"/><circle cx="60" cy="40" r="18" fill="#f6e7a8"/><path d="M54 44l6-8 6 8" fill="none" stroke="${G}" stroke-width="1.5"/><rect x="52" y="56" width="16" height="14" rx="2" fill="${S}"/><path d="M52 61h16M52 65h16" stroke="${S2}"/><path d="M56 70h8l-2 5h-4z" fill="${K}"/>`,
+  sanduicheira: `<rect x="30" y="52" width="60" height="24" rx="10" fill="${K}"/><path d="M30 60q30-20 60 0v-2q-30-18-60 0z" fill="${K2}"/><path d="M32 60q28-16 56 0" fill="${K2}"/><rect x="48" y="44" width="24" height="7" rx="3.5" fill="${K}"/><circle cx="80" cy="68" r="2.5" fill="${G}"/>`,
+  chaleira: `<rect x="36" y="77" width="48" height="5" rx="2" fill="${K}"/><path d="M42 78h36l-4-36H46z" fill="${S}"/><rect x="48" y="37" width="24" height="6" rx="2" fill="${K}"/><path d="M76 44q12 12 0 28" stroke="${K}" stroke-width="5" fill="none"/><path d="M44 52l-11-7 2-4 11 4z" fill="${S}"/><rect x="49" y="48" width="3" height="24" fill="#fff" opacity=".5"/>`,
+  toalhas: stack(O, C, B, L),
+  lencol: stack(L, C, OL, G),
+  ferro: `<rect x="26" y="70" width="64" height="6" rx="2" fill="${S}"/><path d="M28 70q4-24 36-24h22v24z" fill="${O}"/><path d="M48 46q8-14 32-10v10" fill="none" stroke="${K}" stroke-width="5"/><circle cx="62" cy="60" r="3" fill="${G}"/>`,
+  pressao: `<rect x="32" y="48" width="54" height="32" rx="4" fill="${S}"/><ellipse cx="59" cy="48" rx="29" ry="6" fill="${S2}"/><rect x="84" y="41" width="26" height="6" rx="3" fill="${K}"/><rect x="56" y="35" width="6" height="9" fill="${K}"/><rect x="38" y="54" width="3" height="22" fill="#fff" opacity=".5"/>`,
+  ferramentas: `<rect x="52" y="22" width="5" height="28" rx="1" fill="${W}" transform="rotate(18 54 36)"/><rect x="46" y="18" width="16" height="8" rx="1" fill="${S2}" transform="rotate(18 54 22)"/><rect x="70" y="24" width="4" height="26" fill="${G}"/><rect x="69" y="18" width="6" height="8" rx="1" fill="${T}"/><rect x="26" y="48" width="68" height="32" rx="3" fill="${T}"/><rect x="26" y="56" width="68" height="3" fill="#000" opacity=".12"/><rect x="56" y="58" width="8" height="6" rx="1" fill="${K}"/>`,
+  faqueiro: `<rect x="28" y="24" width="64" height="56" rx="3" fill="${C}"/><path d="M42 30v12q0 6 4 7v27h4V49q4-1 4-7V30M46 30v12M50 30v12" stroke="${S2}" stroke-width="2.5" fill="none"/><path d="M60 30q8 10 4 26v20h-4z" fill="${S2}"/><ellipse cx="78" cy="38" rx="6" ry="9" fill="${S2}"/><rect x="76" y="46" width="4" height="30" fill="${S2}"/>`,
+  secador: `<rect x="46" y="52" width="13" height="28" rx="5" fill="${O}"/><rect x="30" y="32" width="50" height="24" rx="12" fill="${O}"/><rect x="78" y="36" width="16" height="16" rx="2" fill="${D}"/><circle cx="40" cy="44" r="7" fill="none" stroke="${C}" stroke-width="1.5"/><rect x="50" y="62" width="5" height="3" rx="1" fill="${G}"/>`,
+  mixer: `<rect x="53" y="16" width="14" height="42" rx="7" fill="${L}" stroke="${B}"/><rect x="57" y="24" width="6" height="8" rx="2" fill="${O}"/><rect x="57" y="58" width="6" height="14" fill="${S}"/><path d="M49 72h22l-3 8H52z" fill="${S2}"/>`,
+  ventilador: `<ellipse cx="60" cy="79" rx="16" ry="3" fill="${K}"/><rect x="58" y="62" width="4" height="17" fill="${K}"/><circle cx="60" cy="40" r="23" fill="${C}" stroke="${S2}" stroke-width="3"/><ellipse cx="60" cy="28" rx="6" ry="11" fill="${O}"/><ellipse cx="70" cy="47" rx="6" ry="11" fill="${O}" transform="rotate(120 70 47)"/><ellipse cx="50" cy="47" rx="6" ry="11" fill="${O}" transform="rotate(-120 50 47)"/><circle cx="60" cy="40" r="4" fill="${D}"/>`,
+  blackout: curt(D),
+  cortinasala: curt(B),
+  liquidificador: `<path d="M44 80h32l-4-18H48z" fill="${K}"/><path d="M46 62l-4-40h36l-4 40z" fill="${GL}" stroke="${S2}"/><path d="M45 48h30l-1.4 14H46.4z" fill="${OL}" opacity=".75"/><rect x="40" y="18" width="40" height="6" rx="2" fill="${K}"/><path d="M78 30h6v18h-7" fill="none" stroke="${S2}" stroke-width="3"/><circle cx="60" cy="72" r="2.5" fill="${G}"/>`,
+  edredom: `<rect x="18" y="30" width="14" height="48" rx="2" fill="${W}"/><rect x="18" y="56" width="84" height="16" rx="2" fill="${W}"/><rect x="34" y="38" width="22" height="11" rx="5" fill="${L}"/><rect x="32" y="44" width="70" height="26" rx="6" fill="${C}"/><path d="M40 52h56M40 60h56" stroke="${B}" stroke-dasharray="3 3"/><rect x="22" y="72" width="4" height="8" fill="${WD}"/><rect x="94" y="72" width="4" height="8" fill="${WD}"/>`,
+  cafeteira: `<rect x="38" y="20" width="44" height="60" rx="4" fill="${K}"/><rect x="42" y="30" width="36" height="22" fill="${K2}"/><path d="M47 54h26v18a4 4 0 0 1-4 4H51a4 4 0 0 1-4-4z" fill="${GL}" stroke="${S2}"/><path d="M48 62h24v10a3 3 0 0 1-3 3H51a3 3 0 0 1-3-3z" fill="${WD}"/><circle cx="74" cy="25" r="2" fill="${G}"/>`,
+  tapetesala: `<path d="M14 76l20-28h52l20 28z" fill="${B}"/><path d="M24 72l14-20h44l14 20z" fill="none" stroke="${O}" stroke-width="2"/><path d="M60 54l10 8-10 8-10-8z" fill="${O}" opacity=".7"/>`,
+  espelho: `<path d="M42 80V34a18 18 0 0 1 36 0v46z" fill="${G}"/><path d="M45.5 78V34a14.5 14.5 0 0 1 29 0v44z" fill="${GL}"/><path d="M52 40l12-10M52 52l18-16" stroke="#fff" stroke-width="2" opacity=".8"/>`,
+  batedeira: `<rect x="32" y="74" width="48" height="6" rx="2" fill="${O}"/><rect x="64" y="34" width="13" height="42" rx="3" fill="${O}"/><rect x="30" y="22" width="50" height="17" rx="8.5" fill="${O}"/><path d="M38 56h30l-4 18H42z" fill="${S}"/><path d="M53 39v18" stroke="${S2}" stroke-width="2"/><circle cx="72" cy="30" r="2" fill="${G}"/>`,
+  luminaria: `<ellipse cx="50" cy="79" rx="14" ry="3" fill="${K}"/><path d="M50 79V22q0-8 16-7" fill="none" stroke="${K}" stroke-width="3"/><path d="M62 14h24l5 16H57z" fill="${G}"/><path d="M60 31q14 18 28 0" fill="#f6e7a8" opacity=".55"/>`,
+  processador: `<rect x="38" y="62" width="44" height="18" rx="4" fill="${L}" stroke="${B}"/><path d="M43 62V36h34v26z" fill="${GL}" stroke="${S2}"/><rect x="64" y="22" width="9" height="14" fill="${S2}"/><path d="M50 52l20-4" stroke="${S2}" stroke-width="2.5"/><rect x="41" y="32" width="38" height="5" rx="2" fill="${S2}"/><circle cx="60" cy="71" r="3" fill="${O}"/>`,
+  jantar: `<ellipse cx="60" cy="74" rx="34" ry="7" fill="${L}" stroke="${B}"/><ellipse cx="60" cy="70" rx="34" ry="7" fill="${L}" stroke="${B}"/><ellipse cx="60" cy="66" rx="34" ry="7" fill="${L}" stroke="${B}"/><ellipse cx="60" cy="66" rx="26" ry="4.5" fill="none" stroke="${O}"/><path d="M42 50a18 11 0 0 0 36 0z" fill="${L}" stroke="${B}"/><path d="M42 50h36" stroke="${O}" stroke-width="2"/>`,
+  aspirador: `<path d="M58 60Q72 52 82 22" stroke="${K}" stroke-width="4" fill="none"/><rect x="78" y="16" width="10" height="10" rx="3" fill="${K}"/><path d="M82 26l8 48" stroke="${S2}" stroke-width="3.5"/><rect x="82" y="73" width="20" height="7" rx="2" fill="${K}"/><ellipse cx="44" cy="66" rx="20" ry="13" fill="${O}"/><circle cx="36" cy="76" r="4" fill="${K}"/><circle cx="54" cy="76" r="4" fill="${K}"/><ellipse cx="44" cy="62" rx="8" ry="4" fill="${D}"/>`,
+  panelas: `<rect x="22" y="50" width="42" height="30" rx="3" fill="${D}"/><ellipse cx="43" cy="50" rx="23" ry="5" fill="${K2}"/><rect x="40" y="41" width="6" height="5" rx="2" fill="${G}"/><rect x="16" y="56" width="8" height="4" rx="2" fill="${K}"/><rect x="62" y="56" width="8" height="4" rx="2" fill="${K}"/><rect x="70" y="60" width="26" height="20" rx="3" fill="${O}"/><rect x="94" y="62" width="20" height="5" rx="2.5" fill="${K}"/>`,
+  airfryer: `<rect x="36" y="22" width="48" height="58" rx="13" fill="${K}"/><circle cx="60" cy="36" r="6" fill="${K2}" stroke="${G}"/><rect x="41" y="50" width="38" height="24" rx="5" fill="${K2}"/><rect x="53" y="59" width="14" height="5" rx="2.5" fill="${G}"/>`,
+  churrasqueira: `<rect x="22" y="60" width="76" height="16" rx="4" fill="${K}"/><rect x="26" y="54" width="68" height="7" fill="${S}"/><path d="M32 54v7M40 54v7M48 54v7M56 54v7M64 54v7M72 54v7M80 54v7M88 54v7" stroke="${S2}"/><rect x="36" y="48" width="18" height="6" rx="3" fill="${T}"/><rect x="60" y="48" width="18" height="6" rx="3" fill="#a5563f"/><circle cx="90" cy="68" r="2.5" fill="${G}"/>`,
+  rack: `<rect x="16" y="54" width="88" height="20" rx="2" fill="${W}"/><path d="M46 54v20M74 54v20" stroke="${WD}"/><circle cx="42" cy="64" r="1.5" fill="${G}"/><circle cx="78" cy="64" r="1.5" fill="${G}"/><rect x="20" y="74" width="4" height="6" fill="${WD}"/><rect x="96" y="74" width="4" height="6" fill="${WD}"/><path d="M30 54h10l-2-10h-6z" fill="${T}"/><path d="M35 44c-6-6-8-12-6-18 6 4 7 10 6 18zM35 44c4-8 9-11 14-12-2 6-7 10-14 12z" fill="${O}"/><rect x="80" y="44" width="16" height="10" fill="${B}"/><rect x="82" y="40" width="12" height="4" fill="${OL}"/>`,
+  forno: `<rect x="24" y="32" width="72" height="46" rx="4" fill="${S}"/><rect x="30" y="38" width="44" height="34" rx="3" fill="${K}"/><rect x="34" y="62" width="36" height="3" fill="${G}" opacity=".6"/><rect x="30" y="38" width="44" height="34" rx="3" fill="#e9a35a" opacity=".18"/><circle cx="85" cy="46" r="4" fill="${K}"/><circle cx="85" cy="60" r="4" fill="${K}"/><rect x="28" y="78" width="6" height="3" fill="${K}"/><rect x="86" y="78" width="6" height="3" fill="${K}"/>`,
+  comoda: `<rect x="32" y="26" width="56" height="48" rx="2" fill="${W}"/><path d="M34 42h52M34 58h52" stroke="${WD}" stroke-width="1.5"/><rect x="56" y="33" width="8" height="2.5" rx="1" fill="${G}"/><rect x="56" y="49" width="8" height="2.5" rx="1" fill="${G}"/><rect x="56" y="65" width="8" height="2.5" rx="1" fill="${G}"/><rect x="36" y="74" width="4" height="6" fill="${WD}"/><rect x="80" y="74" width="4" height="6" fill="${WD}"/><rect x="40" y="16" width="14" height="10" rx="1" fill="${C}" stroke="${G}"/>`,
+  microondas: `<rect x="22" y="36" width="76" height="42" rx="4" fill="${L}" stroke="${B}"/><rect x="28" y="42" width="46" height="30" rx="3" fill="${K}"/><rect x="28" y="42" width="46" height="30" rx="3" fill="#e9a35a" opacity=".12"/><rect x="79" y="44" width="14" height="6" rx="1" fill="${O}"/><path d="M80 56h12M80 60h12M80 64h12" stroke="${S2}" stroke-width="2"/>`,
+  robo: `<ellipse cx="60" cy="70" rx="36" ry="10" fill="${K}"/><ellipse cx="60" cy="65" rx="36" ry="10" fill="${K2}"/><ellipse cx="60" cy="61" rx="9" ry="3.5" fill="${S}"/><circle cx="78" cy="65" r="2" fill="${G}"/><path d="M26 68q-6 4-10 2" stroke="${S2}" stroke-width="1.5" fill="none"/>`,
+  tv: `<rect x="18" y="20" width="84" height="50" rx="2" fill="${K}"/><rect x="22" y="24" width="76" height="42" fill="#c6d3c4"/><path d="M22 66l20-18 14 10 16-16 26 24z" fill="${O}"/><circle cx="82" cy="34" r="5" fill="${G}"/><rect x="56" y="70" width="8" height="5" fill="${K}"/><rect x="42" y="75" width="36" height="4" rx="2" fill="${K}"/>`,
+  colchao: `<path d="M18 62l16-16h68L86 62z" fill="${L}" stroke="${B}"/><rect x="18" y="62" width="68" height="16" fill="${C}" stroke="${B}"/><path d="M86 62l16-16v14L86 78z" fill="${B}"/><path d="M32 54h56M40 50h50" stroke="${B}" stroke-dasharray="2 4"/>`,
+  geladeira: `<rect x="40" y="8" width="40" height="72" rx="5" fill="${S}"/><path d="M40 32h40" stroke="${S2}" stroke-width="2"/><rect x="72" y="16" width="3" height="10" rx="1.5" fill="${K}"/><rect x="72" y="40" width="3" height="18" rx="1.5" fill="${K}"/><rect x="44" y="12" width="3" height="64" fill="#fff" opacity=".45"/>`,
+  sofa: `<rect x="22" y="38" width="76" height="26" rx="8" fill="${O}"/><rect x="16" y="56" width="88" height="18" rx="6" fill="${OL}"/><rect x="10" y="46" width="16" height="30" rx="7" fill="${O}"/><rect x="94" y="46" width="16" height="30" rx="7" fill="${O}"/><rect x="30" y="44" width="18" height="14" rx="4" fill="${B}"/><rect x="18" y="76" width="4" height="5" fill="${WD}"/><rect x="98" y="76" width="4" height="5" fill="${WD}"/>`,
+  lavar: `<rect x="34" y="18" width="52" height="62" rx="5" fill="${L}" stroke="${B}"/><path d="M34 30h52" stroke="${B}"/><circle cx="42" cy="24" r="2.5" fill="${O}"/><rect x="66" y="22" width="14" height="4" rx="1" fill="${S2}"/><circle cx="60" cy="56" r="18" fill="${S}"/><circle cx="60" cy="56" r="13" fill="#a9c0c4"/><path d="M48 60q12 6 24 0v6q-12 8-24 0z" fill="#fff" opacity=".55"/>`
+};
+const pic = key => `<svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="82" rx="44" ry="4" fill="#000" opacity=".07"/>${ART[key] || ""}</svg>`;
 
 /* ---------------- RSVP ---------------- */
 let vai = "sim";
@@ -603,7 +679,7 @@ function renderGifts(){
   const total = list.length; list = list.slice(0, shown);
   $("gifts").innerHTML = list.map(g => `
     <div class="gift" tabindex="0" data-i="${g.i}">
-      <div class="ic">${icon(g.cat)}</div>
+      <div class="pic">${pic(g.art)}</div>
       <span class="cat">${CATS[g.cat]}</span>
       <h4>${g.nome}</h4>
       <p class="v">${brl(g.valor)}</p>
@@ -649,7 +725,7 @@ function refresh(){
 }
 function openGift(g){
   cur = g;
-  $("m-icon").innerHTML = `<use href="#i-${g.cat}"/>`;
+  $("m-pic").innerHTML = g.art ? pic(g.art) : ""; $("m-pic").hidden = !g.art; $("m-ic").hidden = !!g.art;
   $("m-title").textContent = g.nome;
   $("m-val").textContent = g.valor ? brl(g.valor) : ""; $("m-val").hidden = !g.valor;
   $("m-free").hidden = !!g.valor; $("m-in").value = "";
