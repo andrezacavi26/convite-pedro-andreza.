@@ -730,8 +730,8 @@ $("rsvp").addEventListener("submit", async e => {
   let salvo = false;
   if (CONFIG.planilhaURL){
     try {
-      await fetch(CONFIG.planilhaURL, { method:"POST", mode:"no-cors",
-        body: new URLSearchParams({ nome, presenca, recado: msg, origem: location.host }) });
+      const qs = new URLSearchParams({ nome, presenca, recado: msg, origem: location.host }).toString();
+      await fetch(CONFIG.planilhaURL + "?" + qs, { method:"GET", mode:"no-cors", cache:"no-store" });
       salvo = true;
     } catch(_){}
   }

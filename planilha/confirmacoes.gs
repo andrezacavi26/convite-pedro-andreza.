@@ -13,11 +13,21 @@
  * Se a mesma pessoa responder de novo (mesmo nome), a linha dela é ATUALIZADA — não duplica.
  */
 
+// Se o código NÃO foi aberto por Extensões › Apps Script dentro da planilha,
+// cole aqui o ID da planilha (o trecho entre /d/ e /edit no endereço dela):
+const PLANILHA_ID = "";
+
 const ABA = "Confirmações";
 const CABECALHO = ["Data/hora", "Nome", "Vai?", "Recado", "Respostas"];
 
+function planilha_() {
+  const ss = PLANILHA_ID ? SpreadsheetApp.openById(PLANILHA_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) throw new Error("Planilha não encontrada: preencha PLANILHA_ID no topo do código.");
+  return ss;
+}
+
 function aba_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = planilha_();
   let sh = ss.getSheetByName(ABA);
   if (!sh) {
     sh = ss.insertSheet(ABA, 0);
@@ -42,7 +52,9 @@ function resumo_(ss) {
   r.setColumnWidth(1, 200);
 }
 
-function doPost(e) {
+function doPost(e) { return registrar_(e); }
+
+function registrar_(e) {
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
@@ -71,13 +83,21 @@ function doPost(e) {
     sh.getRange(linha, 1).setNumberFormat("dd/MM/yyyy HH:mm");
     sh.getRange(linha, 3).setBackground(presenca === "Sim" ? "#e4e6cf" : "#f3d9cf");
     return saida_({ ok: true });
+  } catch (err) {
+    return saida_({ ok: false, erro: String(err) });
   } finally {
     lock.releaseLock();
   }
 }
 
-function doGet() {
-  return saida_({ ok: true, info: "Planilha de confirmações ativa" });
+function doGet(e) {
+  if (e && e.parameter && e.parameter.nome) return registrar_(e);   // também aceita envio por GET
+  return saida_({ ok: true, info: "Planilha de confirmações ativa", planilha: planilha_().getName() });
+}
+
+// Rode esta função pelo editor (▶ Executar) para testar sem o site.
+function testeManual() {
+  registrar_({ parameter: { nome: "Teste pelo editor", presenca: "Sim", recado: "funcionou" } });
 }
 
 function saida_(obj) {
