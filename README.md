@@ -13,3 +13,10 @@ Link personalizado por pessoa:
 - `/padrinhos?nome=João&tipo=padrinho`
 - `/padrinhos?nome=Maria&tipo=madrinha`
 - `/padrinhos?nome=João e Maria&tipo=casal`
+
+## Site do casamento (`/site`)
+Edite o bloco `CONFIG` no início do `<script>` de `site/index.html`:
+- `whatsapp`: número dos noivos (ex.: `5543999999999`)
+- `pixChave`, `pixNome`, `pixCidade`: dados do PIX
+- `prazoRSVP`: data limite para confirmar
+A lista `PRESENTES` e `HOTEIS` também fica ali.

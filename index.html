@@ -539,7 +539,7 @@
 <script>
 /* ===================== CONFIGURAÇÃO ===================== */
 /* Cole aqui o endereço do site dos noivos (ex.: "https://pedroeandreza.com.br") */
-const SITE_DOS_NOIVOS = "";
+const SITE_DOS_NOIVOS = "/site";
 /* ======================================================== */
 
 const WEDDING = new Date("2027-04-17T16:30:00-03:00");
@@ -557,7 +557,7 @@ document.getElementById("btn-cal").href =
   "&details=" + encodeURIComponent("Celebração do casamento de Pedro & Andreza 💚");
 
 const siteBtn = document.getElementById("btn-site");
-if (SITE_DOS_NOIVOS && /^https?:\/\//.test(SITE_DOS_NOIVOS)) {
+if (SITE_DOS_NOIVOS && /^(https?:\/\/|\/)/.test(SITE_DOS_NOIVOS)) {
   siteBtn.href = SITE_DOS_NOIVOS;
 } else {
   siteBtn.classList.add("disabled");
