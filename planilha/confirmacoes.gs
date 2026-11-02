@@ -62,7 +62,7 @@ function responder_(p) {
   try {
     const sh = planilha_().getSheetByName(ABA_CONV);
     if (!sh) return { ok: false, erro: "Lista de convidados não criada" };
-    const g = linhasDoGrupo_(sh, p.c);
+    const g = linhasDoGrupo_(sh, p.codigo || p.c);
     if (!g.length) return { ok: false, erro: "Convite não encontrado" };
     let vai = []; try { vai = JSON.parse(p.vai || "[]").map(Number); } catch (e) {}
     const recado = String(p.recado || "").slice(0, 1000), agora = new Date();
@@ -103,7 +103,7 @@ function registrar_(e) {
 function doGet(e) {
   const p = (e && e.parameter) || {};
   try {
-    if (p.acao === "grupo") return saida_(grupo_(p.c));
+    if (p.acao === "grupo") return saida_(grupo_(p.codigo || p.c));
     if (p.acao === "responder") return saida_(responder_(p));
     if (p.nome) return registrar_(e);
     return saida_({ ok: true, info: "Planilha de confirmações ativa", planilha: planilha_().getName() });

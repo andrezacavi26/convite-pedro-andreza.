@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     if (req.method === "GET") {
       const c = (req.query && req.query.c) || new URL(req.url, "http://x").searchParams.get("c");
       if (!codigoOk(c)) return res.status(400).json({ ok: false, erro: "Código inválido" });
-      const d = await planilha({ acao: "grupo", c });
+      const d = await planilha({ acao: "grupo", codigo: c });   // "c" é reservado pelo Google
       return res.status(d.ok ? 200 : 404).json(d);
     }
     if (req.method !== "POST") return res.status(405).json({ ok: false, erro: "Método não permitido" });
@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     if (b.c) {
       if (!codigoOk(b.c)) return res.status(400).json({ ok: false, erro: "Código inválido" });
       const vai = Array.isArray(b.vai) ? b.vai.map(Number).filter(n => Number.isInteger(n) && n >= 0 && n < 50) : [];
-      const d = await planilha({ acao: "responder", c: b.c, vai: JSON.stringify(vai), recado });
+      const d = await planilha({ acao: "responder", codigo: b.c, vai: JSON.stringify(vai), recado });
       return res.status(d.ok ? 200 : 502).json(d);
     }
 
