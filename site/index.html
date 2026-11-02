@@ -548,7 +548,7 @@
 <footer>
   <p class="n">Pedro &amp; Andreza</p>
   <p>17 · 04 · 2027 — Cambé, Paraná</p>
-  <p style="opacity:.35;font-size:.55rem;margin-top:14px">v1655</p>
+  <p style="opacity:.35;font-size:.55rem;margin-top:14px">v1700</p>
 </footer>
 
 <!-- MODAL -->
@@ -802,7 +802,11 @@ $("again").addEventListener("click", e => { e.preventDefault(); $("thanks").hidd
   if (GRUPO){ $("grp").hidden = false; } else { $("rsvp").reset(); $("rsvp").hidden = false; } });
 
 /* ---------- RSVP por convite (link com ?c=código) ---------- */
-const CODIGO = (new URLSearchParams(location.search).get("c") || "").trim();
+const CODIGO = (() => {
+  const q = new URLSearchParams(location.search).get("c") || (location.hash.match(/c=([a-z0-9-]+)/i) || [])[1] || "";
+  if (q) { try { localStorage.setItem("pa_convite", q); } catch(_){} return q.trim(); }
+  try { return (localStorage.getItem("pa_convite") || "").trim(); } catch(_){ return ""; }
+})();
 let GRUPO = null;
 function marcar(el, on){ el.classList.toggle("on", on); el.setAttribute("aria-checked", on); }
 async function carregarGrupo(){

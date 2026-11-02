@@ -649,7 +649,7 @@
 <script>
 /* ===================== CONFIGURAÇÃO ===================== */
 /* Cole aqui o endereço do site dos noivos (ex.: "https://pedroeandreza.com.br") */
-const SITE_DOS_NOIVOS = "/site";
+const SITE_DOS_NOIVOS = "/site/";
 /* ======================================================== */
 
 const WEDDING = new Date("2027-04-17T16:30:00-03:00");
@@ -669,6 +669,7 @@ document.getElementById("btn-cal").href =
 const siteBtn = document.getElementById("btn-site");
 if (SITE_DOS_NOIVOS && /^(https?:\/\/|\/)/.test(SITE_DOS_NOIVOS)) {
   const _c = new URLSearchParams(location.search).get("c");
+  if (_c) { try { localStorage.setItem("pa_convite", _c); } catch(e){} }
   siteBtn.href = SITE_DOS_NOIVOS + (_c ? (SITE_DOS_NOIVOS.includes("?") ? "&" : "?") + "c=" + encodeURIComponent(_c) + "#confirmar" : "");
 } else {
   siteBtn.classList.add("disabled");
