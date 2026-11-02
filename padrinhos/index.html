@@ -326,6 +326,16 @@
   .verse-ref{margin-top:10px;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
 
   [hidden]{display:none !important}
+  .dc-panel{flex-direction:column;align-items:center;gap:18px}
+  .ref{margin:0;width:100%;max-width:420px}
+  .ref img{display:block;width:100%;height:auto;border-radius:4px;box-shadow:0 10px 26px rgba(0,0,0,.14);border:1px solid rgba(102,118,60,.25)}
+  #dc-madrinha .ref{max-width:260px}
+  .ref figcaption{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#8a8f75;margin-top:6px;text-align:center}
+  .dc-info{width:100%;max-width:420px}
+  .dc-list{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  @media (max-width:420px){.dc-list{grid-template-columns:1fr}}
+  .swatches{justify-content:center}
+
   .hello{font-family:'Pinyon Script',cursive;font-size:2.1rem;color:var(--olive-700);margin-top:10px}
   .question{margin:22px auto 0;max-width:400px}
   .question #question{font-family:'Cormorant Garamond',serif;font-size:1.65rem;line-height:1.3;color:var(--olive-800);font-weight:500}
@@ -514,35 +524,7 @@
       </div>
 
       <div class="dc-panel on" id="dc-padrinho">
-        <svg class="figure" viewBox="0 0 120 250" aria-label="Ilustração do traje dos padrinhos">
-          <ellipse cx="60" cy="246" rx="34" ry="3" fill="rgba(0,0,0,.08)"/>
-          <!-- pants -->
-          <path d="M33 128 L87 128 L84 238 L64 238 L60 160 L56 238 L36 238 Z" fill="#d8c6a3"/>
-          <path d="M60 140 L60 160" stroke="#c4b08a" stroke-width="1"/>
-          <!-- shoes -->
-          <ellipse cx="45" cy="240" rx="11" ry="4.5" fill="#6b3f22"/><ellipse cx="75" cy="240" rx="11" ry="4.5" fill="#6b3f22"/>
-          <!-- arms -->
-          <path d="M35 58 Q24 90 26 122 L34 122 Q36 92 44 66 Z" fill="#fff" stroke="#e3dfd3"/>
-          <path d="M85 58 Q96 90 94 122 L86 122 Q84 92 76 66 Z" fill="#fff" stroke="#e3dfd3"/>
-          <circle cx="30" cy="125" r="5" fill="#d9a77f"/><circle cx="90" cy="125" r="5" fill="#d9a77f"/>
-          <!-- shirt -->
-          <path d="M36 56 L84 56 L88 130 L32 130 Z" fill="#fff" stroke="#e3dfd3"/>
-          <!-- suspenders -->
-          <path d="M45 56 L47 128" stroke="#7a4a2a" stroke-width="4"/><path d="M75 56 L73 128" stroke="#7a4a2a" stroke-width="4"/>
-          <!-- belt -->
-          <rect x="32" y="125" width="56" height="6" fill="#5e3720"/><rect x="56" y="124.5" width="8" height="7" fill="none" stroke="#b59a62" stroke-width="1.4"/>
-          <!-- neck / head -->
-          <rect x="54" y="46" width="12" height="11" fill="#d9a77f"/>
-          <circle cx="60" cy="33" r="15" fill="#d9a77f"/>
-          <path d="M45 31 Q46 16 60 16 Q75 16 75 31 Q70 23 60 23 Q50 23 45 31 Z" fill="#3b2a20"/>
-          <!-- collar -->
-          <path d="M53 55 L60 62 L56 66 L50 57 Z M67 55 L60 62 L64 66 L70 57 Z" fill="#fff" stroke="#e3dfd3"/>
-          <!-- tie -->
-          <path d="M57.5 61 L62.5 61 L61.5 66 L64 100 L60 107 L56 100 L58.5 66 Z" fill="#556b2f"/>
-          <!-- boutonniere -->
-          <path d="M72 72 q4 -6 8 -2" stroke="#66763c" stroke-width="2" fill="none"/>
-          <circle cx="72" cy="74" r="3.6" fill="#ead9bd"/><circle cx="72" cy="74" r="1.4" fill="#d6bf98"/>
-        </svg>
+        <figure class="ref"><img src="ref-padrinhos.jpg" alt="Referência do traje dos padrinhos: camisa branca, gravata verde oliva, suspensório marrom e calça bege" loading="lazy"><figcaption>Foto de referência</figcaption></figure>
         <div class="dc-info">
           <ul class="dc-list">
             <li>Camisa social <b>branca</b></li>
@@ -562,31 +544,7 @@
       </div>
 
       <div class="dc-panel" id="dc-madrinha">
-        <svg class="figure" viewBox="0 0 120 250" aria-label="Ilustração do traje das madrinhas">
-          <ellipse cx="60" cy="246" rx="36" ry="3" fill="rgba(0,0,0,.08)"/>
-          <!-- hair back -->
-          <path d="M43 30 Q40 64 46 76 L74 76 Q80 64 77 30 Z" fill="#4a3022"/>
-          <!-- skirt -->
-          <path d="M47 104 L73 104 Q86 170 94 242 L26 242 Q34 170 47 104 Z" fill="#66763c"/>
-          <path d="M55 110 Q50 180 44 240 M66 110 Q70 180 76 240" stroke="#55642f" stroke-width="1.2" fill="none"/>
-          <!-- arms -->
-          <path d="M42 60 Q34 86 44 112 L50 110 Q44 88 48 64 Z" fill="#d9a77f"/>
-          <path d="M78 60 Q86 86 76 112 L70 110 Q76 88 72 64 Z" fill="#d9a77f"/>
-          <!-- bodice -->
-          <path d="M44 58 L76 58 L73 106 L47 106 Z" fill="#66763c"/>
-          <path d="M52 58 L60 76 L68 58 Z" fill="#d9a77f"/>
-          <path d="M46 58 L52 58 L60 76 L68 58 L74 58" stroke="#55642f" stroke-width="1" fill="none"/>
-          <!-- neck / head -->
-          <rect x="55" y="44" width="10" height="14" fill="#d9a77f"/>
-          <circle cx="60" cy="32" r="14" fill="#d9a77f"/>
-          <path d="M45 34 Q44 15 60 15 Q76 15 75 34 Q72 22 60 21 Q50 22 45 34 Z" fill="#4a3022"/>
-          <!-- bouquet -->
-          <path d="M60 116 L57 136 M60 116 L63 136" stroke="#66763c" stroke-width="2"/>
-          <ellipse cx="50" cy="112" rx="6" ry="3" fill="#7f8f4a" transform="rotate(-30 50 112)"/>
-          <ellipse cx="70" cy="112" rx="6" ry="3" fill="#7f8f4a" transform="rotate(30 70 112)"/>
-          <circle cx="54" cy="108" r="5" fill="#ead9bd"/><circle cx="64" cy="106" r="5.5" fill="#e8c9a6"/>
-          <circle cx="59" cy="113" r="5" fill="#f3e8d6"/><circle cx="67" cy="113" r="4" fill="#ead9bd"/><circle cx="52" cy="115" r="3.5" fill="#e8c9a6"/>
-        </svg>
+        <figure class="ref"><img src="ref-madrinhas.jpg" alt="Referência do traje das madrinhas: vestido longo verde oliva" loading="lazy"><figcaption>Foto de referência</figcaption></figure>
         <div class="dc-info">
           <ul class="dc-list">
             <li>Vestido <b>longo</b></li>
