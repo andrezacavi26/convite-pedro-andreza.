@@ -752,7 +752,7 @@ const ART = {
 };
 /* Fotos reais: coloque em site/fotos/<nome>.jpg (ex.: fotos/airfryer.jpg). Sem foto, aparece a ilustração. */
 const FOTOS = [];   // quando subir uma foto em site/fotos, coloque o nome aqui. Ex.: ["airfryer","sofa"]
-const foto = key => FOTOS.includes(key) ? `<img src="fotos/${key}.jpg" alt="" loading="lazy" onerror="this.outerHTML=pic('${key}')">` : pic(key);
+const foto = key => FOTOS.includes(key) ? `<img src="/site/fotos/${key}.jpg" alt="" loading="lazy" onerror="this.outerHTML=pic('${key}')">` : pic(key);
 const pic = key => `<svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="82" rx="44" ry="4" fill="#000" opacity=".07"/>${ART[key] || ""}</svg>`;
 
 /* ---------------- RSVP ---------------- */
@@ -924,7 +924,7 @@ function refresh(){
   if (!CONFIG.pixChave) q.innerHTML = '<p class="soon">PIX em breve.</p>';
   else { payload = pix(v);   // sem valor = mesmo código do QR oficial (o convidado digita o valor no banco)
     if (window.QRCode) new QRCode(q, {text:payload, width:188, height:188, colorDark:"#2c361a", colorLight:"#ffffff", correctLevel:QRCode.CorrectLevel.M});
-    else q.innerHTML = '<img src="pix-qr.jpg" alt="QR Code PIX" style="width:188px;height:auto">' + (v ? '<p class="soon" style="padding:4px 0 0;font-size:.75rem">Ao ler este QR, digite o valor de ' + brl(v) + '</p>' : ''); }
+    else q.innerHTML = '<img src="/site/pix-qr.jpg" alt="QR Code PIX" style="width:188px;height:auto">' + (v ? '<p class="soon" style="padding:4px 0 0;font-size:.75rem">Ao ler este QR, digite o valor de ' + brl(v) + '</p>' : ''); }
   $("pix-note").textContent = v ? `O código já vai com o valor de ${brl(v)}.` : "Sem valor definido: você digita o valor no app do banco.";
   $("m-copy").toggleAttribute("disabled", !payload);
   $("m-wa").href = wa(`💚 Oi, Pedro & Andreza! Acabei de enviar o presente "${cur.nome}"${v ? " (" + brl(v) + ")" : ""} pelo PIX. Felicidades!`);
