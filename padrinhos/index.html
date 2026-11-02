@@ -475,7 +475,7 @@
     <p class="overline reveal">Um convite muito especial</p>
     <p class="hello reveal" id="hello">Querido(a),</p>
 
-    <p class="lead reveal">Você faz parte da nossa história. Mesmo com a distância, não conseguimos imaginar esse dia sem você ao nosso lado no altar.</p>
+    <p class="lead reveal" id="lead">Algumas pessoas fazem parte da nossa história de um jeito especial. Você é uma delas, e queremos você ao nosso lado quando dissermos “sim”.</p>
 
     <h1 class="names reveal">Pedro<span class="amp">&amp;</span>Andreza</h1>
 
@@ -501,6 +501,13 @@
     </div>
     <div class="year reveal">2027</div>
     <div class="time reveal">às 16h30</div>
+
+    <div class="divider"><span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="12" rx="4" ry="9" transform="rotate(45 12 12)"/></svg><span></span></div>
+
+    <section class="reveal">
+      <p class="verse">“O amor é paciente, o amor é bondoso…<br>Tudo sofre, tudo crê, tudo espera, tudo suporta.”</p>
+      <p class="verse-ref">1 Coríntios 13:4,7</p>
+    </section>
 
     <section class="reveal" style="margin-top:28px">
       <div class="countdown" id="countdown">
@@ -796,6 +803,7 @@ const Q = {
   "":       "aceita ser nosso padrinho ou nossa madrinha?"
 };
 const HELLO = {padrinho:"Querido", madrinha:"Querida", casal:"Queridos", "":"Querido(a)"};
+if (TIPO === "casal") document.getElementById("lead").textContent = "Algumas pessoas fazem parte da nossa história de um jeito especial. Vocês são uma delas, e queremos vocês ao nosso lado quando dissermos “sim”.";
 document.getElementById("hello").textContent = NOME ? `${HELLO[TIPO]} ${NOME},` : `${HELLO[TIPO]},`;
 document.getElementById("question").textContent = Q[TIPO];
 if (TIPO === "casal") document.getElementById("btn-yes").textContent = "Sim, aceitamos! 💚";
