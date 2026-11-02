@@ -1,7 +1,7 @@
 # Fotos dos presentes
 
 Coloque aqui as fotos em .jpg com exatamente estes nomes (de preferência quadradas ou 4:3, até ~200 KB).
-Presente sem foto mostra a ilustração automaticamente.
+Presente sem foto mostra a ilustração. Depois de subir a foto, inclua o nome na lista `FOTOS` em site/index.html (ou peça ao Claude).
 
 - `panos.jpg` — Jogo de panos de prato (R$ 25)
 - `lixeira.jpg` — Lixeira de inox (R$ 30)

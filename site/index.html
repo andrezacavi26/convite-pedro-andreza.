@@ -239,6 +239,78 @@
   .toast.on{opacity:1;transform:translateX(-50%)}
   .leaf{position:fixed;top:-40px;z-index:55;pointer-events:none;color:var(--olive-500);animation:fall linear forwards}
   @keyframes fall{to{transform:translate(var(--dx),110vh) rotate(var(--rot));opacity:0}}
+
+  /* ================= LEITURA FÁCIL ================= */
+  html{font-size:18px}
+  @media (max-width:520px){html{font-size:17px}}
+  .eyebrow,.count small,.gift .cat,.dist small,.fld label,.chip,.sortrow,.sortrow button,.hero .place,.free .pin,.hotel .tag,footer p{letter-spacing:.1em !important}
+  .btn{font-size:.8rem;letter-spacing:.1em;padding:17px 26px;min-height:54px}
+  .nav-in a{font-size:.78rem;letter-spacing:.1em}
+  .count small{font-size:.66rem}
+  .hero .place{font-size:.78rem}
+  .head{margin-bottom:44px}
+  .head .badge{width:68px;height:68px;border-radius:50%;background:var(--olive-800);color:var(--linen);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 0 0 6px rgba(138,109,54,.18)}
+  .head .badge svg{width:32px;height:32px}
+  .band .head .badge{background:var(--linen);color:var(--olive-900)}
+  .head .num{font-style:normal;font-family:var(--sans);font-size:.74rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+  .head p{font-size:1.3rem}
+  .day .sm,.travel li,.hotel p,.gift-foot,.disclaimer,.stay-sub,.free p{font-size:1rem}
+  .day .big{font-size:2.1rem}
+  .fld label{font-size:.78rem}
+  .fld input,.fld textarea{font-size:1.4rem}
+  .seg button{font-size:1.3rem;padding:16px 8px}
+  .step button{width:52px;height:52px;font-size:1.7rem}
+  .chip{font-size:.74rem;padding:12px 16px}
+  .sortrow{font-size:.74rem}
+  .gift .cat{font-size:.66rem}
+  .gift h4{font-size:1.3rem}
+  .gift .v{font-size:1.55rem}
+  .gift .go{opacity:1 !important;transform:none !important;font-size:.7rem;letter-spacing:.12em;border:1px solid var(--gold);padding:8px 14px;margin-top:12px}
+  .dist small{font-size:.7rem}
+  .hotel a.route{font-size:.74rem;letter-spacing:.1em;padding:12px 16px}
+  .hotel .tag{font-size:.66rem}
+  .ptabs button{font-size:.76rem;letter-spacing:.1em;padding:15px 6px}
+  .m-key{font-size:.9rem}
+  .card-box p{font-size:1rem}
+  .m-help{font-size:.9rem}
+  .steps{text-align:left;margin:16px 4px 0;padding-left:22px;font-size:.98rem;color:var(--ink);line-height:1.5}
+  .steps li{margin-bottom:6px}
+  .steps b{color:var(--olive-900)}
+
+  /* seções com fundo próprio (faixas inteiras) */
+  #grande-dia,#hospedagem{background:#fbf8f0;box-shadow:0 0 0 100vmax #fbf8f0;clip-path:inset(0 -100vmax);padding-bottom:90px;border-top:4px solid var(--olive-700)}
+  #presentes{background:var(--linen-2);box-shadow:0 0 0 100vmax var(--linen-2);clip-path:inset(0 -100vmax);padding-bottom:90px}
+  #hospedagem{margin-top:0}
+  .band{margin-top:0}
+  footer{margin-top:0}
+
+  /* menu rápido */
+  .quick{max-width:980px;margin:0 auto;padding:10px 20px 70px}
+  .quick-t{text-align:center;font-family:var(--serif);font-size:1.6rem;font-weight:500;color:var(--olive-900);margin-bottom:18px}
+  .qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .qcard{display:flex;align-items:center;gap:16px;padding:20px 18px;background:var(--tile);border:2px solid var(--olive-700);text-decoration:none;color:var(--ink);
+    transition:background .25s, transform .25s}
+  .qcard:hover{background:#fff;transform:translateY(-2px)}
+  .qcard .qi{width:54px;height:54px;flex:none;border-radius:50%;background:var(--olive-800);color:var(--linen);display:flex;align-items:center;justify-content:center}
+  .qcard .qi svg{width:28px;height:28px}
+  .qcard b{display:block;font-family:var(--serif);font-size:1.4rem;font-weight:600;color:var(--olive-900);line-height:1.15}
+  .qcard small{display:block;font-size:.9rem;color:var(--muted);margin-top:2px}
+  .qcard i{margin-left:auto;font-style:normal;font-size:2rem;color:var(--gold);line-height:1}
+
+  /* barra inferior fixa no celular */
+  footer .n{letter-spacing:0 !important;text-transform:none !important}
+  .tabbar{display:none}
+  @media (max-width:760px){
+    .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;top:auto;left:0;right:0;bottom:0;z-index:40;background:var(--olive-900);border:none;backdrop-filter:none;
+      padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.2)}
+    .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#e6e9d0;font-size:.72rem;font-weight:500;padding:6px 0}
+    .tabbar a svg{width:24px;height:24px}
+    .tabbar a.on{color:var(--gold-2)}
+    body{padding-bottom:78px}
+    .nav-in a.l{display:none}
+    .nav-in{justify-content:center}
+    .toast{bottom:96px}
+  }
 </style>
 </head>
 <body>
@@ -298,10 +370,20 @@
   </div>
 </header>
 
+<section class="quick" aria-label="Menu">
+  <p class="quick-t">O que você deseja fazer?</p>
+  <div class="qgrid">
+    <a class="qcard" href="#grande-dia"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span><b>Ver data e local</b><small>Horário, endereço e mapa</small></span><i>›</i></a>
+    <a class="qcard" href="#confirmar"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg></span><span><b>Confirmar presença</b><small>Avise se você vai</small></span><i>›</i></a>
+    <a class="qcard" href="#presentes"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-5-6-2s4 2 6 2zm0 0c2-4 6-5 6-2s-4 2-6 2z"/></svg></span><span><b>Dar um presente</b><small>PIX ou cartão</small></span><i>›</i></a>
+    <a class="qcard" href="#hospedagem"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 19V6M3 15h18v4M21 19v-6a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11.5" r="2"/></svg></span><span><b>Hotel e como chegar</b><small>Para quem vem de longe</small></span><i>›</i></a>
+  </div>
+</section>
+
 <!-- 01 O GRANDE DIA -->
 <section class="sec" id="grande-dia">
   <div class="head reveal">
-    <p class="num">01</p>
+    <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div><p class="num">Parte 1 de 4</p>
     <h2>O grande <em>dia</em></h2>
     <p>Cerimônia e celebração em meio à natureza, num fim de tarde de outono.</p>
   </div>
@@ -329,7 +411,7 @@
 <div class="band" id="confirmar">
   <section class="sec">
     <div class="head reveal">
-      <p class="num">02</p>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg></div><p class="num">Parte 2 de 4</p>
       <h2>Confirme sua <em>presença</em></h2>
       <p>Preencha abaixo — sua confirmação chega direto no nosso WhatsApp.</p>
     </div>
@@ -367,7 +449,7 @@
 <!-- 03 PRESENTES -->
 <section class="sec" id="presentes">
   <div class="head reveal">
-    <p class="num">03</p>
+    <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-5-6-2s4 2 6 2zm0 0c2-4 6-5 6-2s-4 2-6 2z"/></svg></div><p class="num">Parte 3 de 4</p>
     <h2>Lista de <em>presentes</em></h2>
     <p>Estamos montando nosso lar! Se quiser nos presentear, escolha um item — você paga por PIX ou cartão.</p>
   </div>
@@ -396,7 +478,7 @@
 <!-- 04 HOSPEDAGEM -->
 <section class="sec" id="hospedagem">
   <div class="head reveal">
-    <p class="num">04</p>
+    <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 19V6M3 15h18v4M21 19v-6a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11.5" r="2"/></svg></div><p class="num">Parte 4 de 4</p>
     <h2>Hospedagem &amp; <em>como chegar</em></h2>
     <p>Para quem vem de longe: o local fica em Cambé, quase na divisa com Londrina.</p>
   </div>
@@ -455,7 +537,7 @@
         <button class="btn btn-solid" id="m-copy" type="button">Copiar PIX copia e cola</button>
         <a class="btn btn-line" id="m-wa" target="_blank" rel="noopener">Avisar os noivos</a>
       </div>
-      <p class="m-help">No app do banco: PIX › Ler QR Code ou Copia e Cola.</p>
+      <ol class="steps"><li>Abra o aplicativo do seu banco</li><li>Toque em <b>PIX</b> › <b>Pagar com QR Code</b> (ou <b>Copia e Cola</b>)</li><li>Confira o valor e confirme</li></ol>
     </div>
 
     <div id="p-cartao" hidden>
@@ -472,6 +554,13 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<nav class="tabbar" aria-label="Navegação">
+  <a href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><span>Início</span></a>
+  <a href="#grande-dia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Local</span></a>
+  <a href="#confirmar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg><span>Presença</span></a>
+  <a href="#presentes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-5-6-2s4 2 6 2zm0 0c2-4 6-5 6-2s-4 2-6 2z"/></svg><span>Presentes</span></a>
+  <a href="#hospedagem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 19V6M3 15h18v4M21 19v-6a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11.5" r="2"/></svg><span>Hotel</span></a>
+</nav>
 
 <script>
 /* ======================= CONFIGURAÇÃO ======================= */
@@ -622,7 +711,8 @@ const ART = {
   lavar: `<rect x="34" y="18" width="52" height="62" rx="5" fill="${L}" stroke="${B}"/><path d="M34 30h52" stroke="${B}"/><circle cx="42" cy="24" r="2.5" fill="${O}"/><rect x="66" y="22" width="14" height="4" rx="1" fill="${S2}"/><circle cx="60" cy="56" r="18" fill="${S}"/><circle cx="60" cy="56" r="13" fill="#a9c0c4"/><path d="M48 60q12 6 24 0v6q-12 8-24 0z" fill="#fff" opacity=".55"/>`
 };
 /* Fotos reais: coloque em site/fotos/<nome>.jpg (ex.: fotos/airfryer.jpg). Sem foto, aparece a ilustração. */
-const foto = key => `<img src="fotos/${key}.jpg" alt="" loading="lazy" onerror="this.outerHTML=pic('${key}')">`;
+const FOTOS = [];   // quando subir uma foto em site/fotos, coloque o nome aqui. Ex.: ["airfryer","sofa"]
+const foto = key => FOTOS.includes(key) ? `<img src="fotos/${key}.jpg" alt="" loading="lazy" onerror="this.outerHTML=pic('${key}')">` : pic(key);
 const pic = key => `<svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="82" rx="44" ry="4" fill="#000" opacity=".07"/>${ART[key] || ""}</svg>`;
 
 /* ---------------- RSVP ---------------- */
@@ -760,7 +850,7 @@ $("hotels").innerHTML = HOTEIS.map(h => `
 /* ---------------- reveal & nav ---------------- */
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold:.1});
 document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-const links = [...document.querySelectorAll(".nav-in a.l")];
+const links = [...document.querySelectorAll(".nav-in a.l, .tabbar a")];
 const so = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }),
   {rootMargin:"-45% 0px -50% 0px"});
 ["grande-dia","confirmar","presentes","hospedagem"].forEach(id => so.observe($(id)));
