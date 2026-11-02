@@ -525,15 +525,30 @@
     <p class="m-val" id="m-val"></p>
     <div class="m-free" id="m-free" hidden><span>R$</span><input id="m-in" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00"></div>
 
-    <div id="p-cartao">
+    <div class="ptabs">
+      <button type="button" data-p="pix" class="on"><svg><use href="#i-pix"/></svg>PIX</button>
+      <button type="button" data-p="cartao"><svg><use href="#i-cartao"/></svg>Cartão</button>
+    </div>
+
+    <div id="p-pix">
+      <div class="qr" id="qr"></div>
+      <div class="m-acts">
+        <button class="btn btn-solid" id="m-copy" type="button">Copiar código PIX</button>
+        <a class="btn btn-line" id="m-wa" target="_blank" rel="noopener">Avisar os noivos</a>
+      </div>
+      <ol class="steps"><li>Toque em <b>Copiar código PIX</b></li><li>Abra o app do seu banco › <b>PIX</b> › <b>Pix Copia e Cola</b></li><li>Cole o código, confira o valor e confirme</li></ol>
+      <p class="m-help">Ou aponte a câmera do app do banco para o QR Code.</p>
+    </div>
+
+    <div id="p-cartao" hidden>
       <div class="card-box">
-        <div class="cards"><span>PIX</span><span>Cartão até 12x</span><span>Sem cadastro</span></div>
+        <div class="cards"><span>Crédito</span><span>Até 12x</span><span>Sem cadastro</span></div>
         <p id="c-text"></p>
         <div class="m-acts">
           <a class="btn btn-solid" id="c-go" target="_blank" rel="noopener">Ir para o pagamento</a>
           <a class="btn btn-line" id="c-wa" target="_blank" rel="noopener">Avisar os noivos</a>
         </div>
-        <ol class="steps"><li>Toque em <b>Ir para o pagamento</b></li><li>Escolha <b>PIX</b> ou <b>cartão</b> (à vista ou parcelado)</li><li>Pronto! Você volta para o site ao terminar</li></ol><p class="m-help">Pagamento seguro pela InfinitePay.</p>
+        <ol class="steps"><li>Toque em <b>Ir para o pagamento</b></li><li>Coloque os dados do <b>cartão</b> (à vista ou parcelado)</li><li>Pronto! Você volta para o site ao terminar</li></ol><p class="m-help">Pagamento seguro pela InfinitePay.</p>
       </div>
     </div>
   </div>
@@ -551,7 +566,7 @@
 /* ======================= CONFIGURAÇÃO ======================= */
 const CONFIG = {
   whatsapp:   "",                 // número dos noivos: DDI+DDD+número, só números. Ex.: "5543999999999"
-  pixChave:   "",                 // chave PIX (CPF, e-mail, celular +55…, ou aleatória)
+  pixChave:   "silvayarin@jim.com",                 // chave PIX (CPF, e-mail, celular +55…, ou aleatória)
   pixNome:    "PEDRO E ANDREZA",  // nome do recebedor (sem acento, até 25 letras)
   pixCidade:  "CAMBE",
   cartaoLink: "",   // (não usado — pagamentos pela InfinitePay)                 // "Seu link" do Mercado Pago (quem paga digita o valor). Ex.: "https://link.mercadopago.com.br/pedroeandreza"
@@ -777,13 +792,26 @@ renderGifts();
 let cur = null, payload = "", tab = "pix";
 const parseBRL = t => { t = String(t).replace(/[^0-9.,]/g,""); if (t.includes(",")) t = t.replace(/\./g,"").replace(",","."); return parseFloat(t) || 0; };
 const val = () => cur.valor || Math.max(0, Math.round(parseBRL($("m-in").value) * 100) / 100);
+function setTab(t){ tab = t; document.querySelectorAll(".ptabs button").forEach(b => b.classList.toggle("on", b.dataset.p === t));
+  $("p-pix").hidden = t !== "pix"; $("p-cartao").hidden = t !== "cartao"; refresh(); }
+document.querySelector(".ptabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setTab(b.dataset.p); });
 function refresh(){
   const v = val();
+  // PIX copia e cola
+  const q = $("qr"); q.innerHTML = ""; payload = "";
+  if (!CONFIG.pixChave) q.innerHTML = '<p class="soon">PIX em breve.</p>';
+  else if (!v) q.innerHTML = '<p class="soon">Digite o valor acima para gerar o código PIX.</p>';
+  else { payload = pix(v);
+    if (window.QRCode) new QRCode(q, {text:payload, width:188, height:188, colorDark:"#2c361a", colorLight:"#ffffff", correctLevel:QRCode.CorrectLevel.M});
+    else q.innerHTML = '<p class="soon">Use o botão “Copiar código PIX”.</p>'; }
+  $("m-copy").toggleAttribute("disabled", !payload);
+  $("m-wa").href = wa(`💚 Oi, Pedro & Andreza! Acabei de enviar o presente "${cur.nome}"${v ? " (" + brl(v) + ")" : ""} pelo PIX. Felicidades!`);
+  // Cartão
   $("c-wa").href = wa(`💚 Oi, Pedro & Andreza! Acabei de enviar o presente "${cur.nome}"${v ? " (" + brl(v) + ")" : ""}. Felicidades!`);
   const online = CONFIG.checkoutAPI && location.protocol.startsWith("http") && !/claude|claudeusercontent/.test(location.host);
   $("c-go").removeAttribute("href"); $("c-go").toggleAttribute("disabled", !v || !online);
   $("c-text").innerHTML = !online ? "O pagamento abre no site oficial do casamento."
-    : v ? `Você será levado à página de pagamento segura com o valor de <b>${brl(v)}</b> já preenchido. Lá você escolhe <b>PIX ou cartão</b> — sem baixar nada e sem criar conta.`
+    : v ? `Você será levado à página de pagamento segura com o valor de <b>${brl(v)}</b> já preenchido. É só colocar os dados do cartão — sem baixar nada e sem criar conta.`
         : "Digite o valor acima para continuar.";
 }
 function openGift(g){
@@ -792,11 +820,21 @@ function openGift(g){
   $("m-title").textContent = g.nome;
   $("m-val").textContent = g.valor ? brl(g.valor) : ""; $("m-val").hidden = !g.valor;
   $("m-free").hidden = !!g.valor; $("m-in").value = "";
-  refresh();
+  setTab("pix");
   $("modal").hidden = false; document.body.style.overflow = "hidden";
   if (!g.valor) setTimeout(() => $("m-in").focus(), 300);
 }
 $("m-in").addEventListener("input", refresh);
+$("m-copy").addEventListener("click", async () => {
+  if (!payload) return;
+  let ok = false;
+  try { await navigator.clipboard.writeText(payload); ok = true; } catch(_){
+    try { const t = document.createElement("textarea"); t.value = payload; t.style.position="fixed"; t.style.opacity="0"; document.body.appendChild(t); t.select(); ok = document.execCommand("copy"); t.remove(); } catch(__){}
+  }
+  if (ok){ $("m-copy").textContent = "Código copiado! ✓"; toast("Código PIX copiado! Agora cole no app do seu banco 💚"); leaves(20);
+           setTimeout(() => $("m-copy").textContent = "Copiar código PIX", 3000); }
+  else toast("Não foi possível copiar — use o QR Code");
+});
 $("c-go").addEventListener("click", async e => {
   e.preventDefault();
   const v = val(); if (!v) return;
