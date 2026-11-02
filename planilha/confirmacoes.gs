@@ -155,5 +155,5 @@ function doGet(e) {
 function doPost(e) { return doGet(e); }
 
 function testeManual() {
-  Logger.log(JSON.stringify(grupo_(LISTA[0][0])));
+  Logger.log(JSON.stringify(grupo_("luiz-59c")));
 }
