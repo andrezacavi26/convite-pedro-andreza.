@@ -755,8 +755,9 @@ $("rsvp").addEventListener("submit", async e => {
     $("thanks-p").textContent = "Não conseguimos registrar sua resposta agora. Por favor, tente de novo em instantes ou avise os noivos pelo WhatsApp." + (window.__rsvpErro ? " (" + window.__rsvpErro + ")" : "");
     $("wa-again").hidden = false;
   }
-  $("thanks-t").textContent = vai === "sim" ? "Que alegria!" : "Obrigado por avisar!";
-  if (vai === "sim") leaves(40);
+  $("thanks-t").textContent = !salvo ? "Ops!" : (vai === "sim" ? "Que alegria!" : "Obrigado por avisar!");
+  $("wa-again").textContent = salvo ? "Avisar também pelo WhatsApp" : "Avisar pelo WhatsApp";
+  if (vai === "sim" && salvo) leaves(40);
   $("rsvp").hidden = true; $("thanks").hidden = false;
 });
 $("again").addEventListener("click", e => { e.preventDefault(); $("rsvp").reset(); $("rsvp").hidden = false; $("thanks").hidden = true; });
