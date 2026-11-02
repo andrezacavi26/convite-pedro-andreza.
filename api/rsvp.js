@@ -1,7 +1,7 @@
 // Recebe a confirmação de presença do site e grava na planilha Google (Apps Script).
 // O endereço da planilha pode ser trocado pela variável PLANILHA_URL na Vercel.
 const PLANILHA_URL = process.env.PLANILHA_URL ||
-  "https://script.google.com/macros/s/AKfycbxx7c7nHxODx9xfASAhnqffDmcqwph75niRddVLnkPEYtomlv7vEWdP9dhlyBM3DFeA/exec";
+  "https://script.google.com/macros/s/AKfycbztBr4Ej-z9eWfbFOcccwcWgV34mp0pm7L6ZSX1BlCxbcnPBT6aKpMs1htlK7ZoQ-X1/exec";
 
 module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
