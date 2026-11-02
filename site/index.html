@@ -315,6 +315,22 @@
   .pix-key span{width:100%;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
   .pix-key b{font-size:1rem;color:var(--olive-900);font-weight:600;word-break:break-all}
   .pix-key button{font:600 .7rem var(--sans);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--olive-700);background:transparent;color:var(--olive-900);padding:7px 10px;cursor:pointer}
+  /* RSVP por convite */
+  .grp-hi{font-family:var(--serif);font-size:1.8rem;color:var(--linen);text-align:center;line-height:1.2}
+  .grp-hi b{font-weight:600;color:var(--gold-2)}
+  .grp-sub{text-align:center;color:#dfe3c4;font-size:1.05rem;margin:6px 0 20px}
+  .grp-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+  .grp-p{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid rgba(247,243,234,.45);cursor:pointer;user-select:none;transition:background .2s,border-color .2s}
+  .grp-p .bx{width:30px;height:30px;flex:none;border:2px solid var(--gold-2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--olive-900)}
+  .grp-p span{font-family:var(--serif);font-size:1.35rem;color:#fff}
+  .grp-p small{margin-left:auto;font-size:.78rem;color:#dfe3c4;letter-spacing:.06em}
+  .grp-p.on{background:rgba(247,243,234,.12);border-color:var(--gold-2)}
+  .grp-p.on .bx{background:var(--gold-2)}
+  .grp-p.on .bx::after{content:"✓"}
+  .grp-none{width:100%;margin-top:10px;background:transparent;color:#e6e9d0;border-color:rgba(247,243,234,.45)}
+  .grp-none:hover{background:rgba(247,243,234,.1);color:#fff}
+  .grp-done{text-align:center;color:var(--gold-2);font-size:.92rem;margin:-12px 0 18px}
+  .grp-load{text-align:center;color:#dfe3c4;font-size:1.1rem;padding:30px 0}
   .tabbar{display:none}
   @media (max-width:760px){
     .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;top:auto;left:0;right:0;bottom:0;z-index:40;background:var(--olive-900);border:none;backdrop-filter:none;
@@ -432,6 +448,17 @@
       <p>Preencha seu nome e toque em enviar. Leva menos de 1 minuto!</p>
     </div>
     <div class="form reveal">
+      <form id="grp" novalidate hidden>
+        <p class="grp-hi">Olá, <b id="grp-nome"></b>!</p>
+        <p class="grp-sub">Marque quem <b>vai</b> ao nosso casamento:</p>
+        <div class="grp-list" id="grp-list"></div>
+        <p class="grp-done" id="grp-done" hidden>Vocês já responderam — pode alterar e enviar de novo se precisar.</p>
+        <div class="fld"><label for="g-msg">Recado para os noivos (opcional)</label><textarea id="g-msg" rows="2" placeholder="Deixe uma mensagem carinhosa"></textarea></div>
+        <button class="btn btn-cream full" type="submit" id="grp-btn">Enviar confirmação</button>
+        <button class="btn grp-none" type="button" id="grp-none">Infelizmente ninguém poderá ir</button>
+        <p class="note" id="prazo2" hidden></p>
+      </form>
+      <p class="grp-load" id="grp-load" hidden>Carregando seu convite…</p>
       <form id="rsvp" novalidate>
         <div class="seg" id="seg">
           <button type="button" data-v="sim" class="on">Estarei lá</button>
@@ -521,7 +548,7 @@
 <footer>
   <p class="n">Pedro &amp; Andreza</p>
   <p>17 · 04 · 2027 — Cambé, Paraná</p>
-  <p style="opacity:.35;font-size:.55rem;margin-top:14px">v1440</p>
+  <p style="opacity:.35;font-size:.55rem;margin-top:14px">v1520</p>
 </footer>
 
 <!-- MODAL -->
@@ -771,7 +798,62 @@ $("rsvp").addEventListener("submit", async e => {
   if (vai === "sim" && salvo) leaves(40);
   $("rsvp").hidden = true; $("thanks").hidden = false;
 });
-$("again").addEventListener("click", e => { e.preventDefault(); $("rsvp").reset(); $("rsvp").hidden = false; $("thanks").hidden = true; });
+$("again").addEventListener("click", e => { e.preventDefault(); $("thanks").hidden = true;
+  if (GRUPO){ $("grp").hidden = false; } else { $("rsvp").reset(); $("rsvp").hidden = false; } });
+
+/* ---------- RSVP por convite (link com ?c=código) ---------- */
+const CODIGO = (new URLSearchParams(location.search).get("c") || "").trim();
+let GRUPO = null;
+function marcar(el, on){ el.classList.toggle("on", on); el.setAttribute("aria-checked", on); }
+async function carregarGrupo(){
+  if (!CODIGO || !/^[a-z0-9-]{3,40}$/i.test(CODIGO)) return;
+  $("rsvp").hidden = true; $("grp-load").hidden = false;
+  try {
+    const r = await fetch("/api/rsvp?c=" + encodeURIComponent(CODIGO)); const d = await r.json();
+    if (!d.ok) throw new Error(d.erro);
+    GRUPO = d;
+    $("grp-nome").textContent = d.convite;
+    $("grp-list").innerHTML = d.pessoas.map(p => `<div class="grp-p" role="checkbox" tabindex="0" data-i="${p.i}"><span class="bx"></span><span></span><small></small></div>`).join("");
+    [...$("grp-list").children].forEach((el, k) => {
+      const p = d.pessoas[k]; el.children[1].textContent = p.nome;
+      marcar(el, p.resposta ? p.resposta === "sim" : true);
+      const upd = () => { el.children[2].textContent = el.classList.contains("on") ? "vai" : "não vai"; };
+      upd();
+      el.addEventListener("click", () => { marcar(el, !el.classList.contains("on")); upd(); });
+      el.addEventListener("keydown", e => { if (e.key === " " || e.key === "Enter"){ e.preventDefault(); el.click(); } });
+    });
+    $("grp-done").hidden = !d.respondido;
+    const hp = document.querySelector("#confirmar .head p"); if (hp) hp.textContent = "Marque quem vai e toque em enviar. Leva menos de 1 minuto!";
+    if (CONFIG.prazoRSVP){ $("prazo2").hidden = false; $("prazo2").textContent = "Por favor, confirme até " + CONFIG.prazoRSVP + "."; }
+    $("grp").hidden = false;
+  } catch(_){ GRUPO = null; $("rsvp").hidden = false; }
+  finally { $("grp-load").hidden = true; }
+}
+async function enviarGrupo(lista){
+  const btn = $("grp-btn"), old = btn.textContent; btn.textContent = "Enviando…"; btn.setAttribute("disabled","");
+  let d = {};
+  try { const r = await fetch("/api/rsvp", { method:"POST", headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({ c: CODIGO, vai: lista, recado: $("g-msg").value.trim() }) }); d = await r.json(); } catch(_){}
+  btn.textContent = old; btn.removeAttribute("disabled");
+  const nomes = GRUPO.pessoas.filter(p => lista.includes(p.i)).map(p => p.nome);
+  if (d.ok){
+    GRUPO.pessoas.forEach(p => p.resposta = lista.includes(p.i) ? "sim" : "nao");
+    $("thanks-t").textContent = lista.length ? "Que alegria!" : "Obrigado por avisar!";
+    $("thanks-p").textContent = lista.length ? `Confirmado: ${nomes.join(", ")}. Até lá!` : "Sentiremos sua falta. Obrigado por responder!";
+    $("wa-again").hidden = true; $("again").textContent = "Alterar resposta";
+    if (lista.length) leaves(45);
+  } else {
+    $("thanks-t").textContent = "Ops!";
+    $("thanks-p").textContent = "Não conseguimos registrar agora. Tente de novo em instantes." + (d.erro ? " (" + d.erro + ")" : "");
+    $("wa-again").hidden = !CONFIG.whatsapp; $("again").textContent = "Tentar de novo";
+  }
+  $("grp").hidden = true; $("thanks").hidden = false;
+}
+$("grp").addEventListener("submit", e => { e.preventDefault();
+  const lista = [...$("grp-list").children].filter(el => el.classList.contains("on")).map(el => +el.dataset.i);
+  enviarGrupo(lista); });
+$("grp-none").addEventListener("click", () => enviarGrupo([]));
+carregarGrupo();
 
 /* ---------------- PIX (BR Code) ---------------- */
 const clean = (s,n) => s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9 ]/g,"").toUpperCase().slice(0,n);
