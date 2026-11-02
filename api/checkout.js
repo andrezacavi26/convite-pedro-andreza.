@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") return res.status(405).json({ error: "Use POST" });
 
-  const handle = (process.env.INFINITEPAY_HANDLE || "").replace(/^\$/, "").trim();
+  const handle = (process.env.INFINITEPAY_HANDLE || "silvayarin").replace(/^\$/, "").trim();
   const apiKey = (process.env.INFINITEPAY_API_KEY || "").trim();
   if (!handle && !apiKey) return res.status(503).json({ error: "Checkout ainda não configurado" });
 
