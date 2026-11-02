@@ -523,7 +523,7 @@
     <div class="m-pic" id="m-pic"></div><div class="m-ic" id="m-ic"><svg><use href="#i-coracao"/></svg></div>
     <p class="m-title" id="m-title"></p>
     <p class="m-val" id="m-val"></p>
-    <div class="m-free" id="m-free" hidden><span>R$</span><input id="m-in" type="number" min="1" step="1" inputmode="numeric" placeholder="0,00"></div>
+    <div class="m-free" id="m-free" hidden><span>R$</span><input id="m-in" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00"></div>
 
     <div class="ptabs">
       <button type="button" data-p="pix" class="on"><svg><use href="#i-pix"/></svg>PIX</button>
@@ -789,7 +789,8 @@ renderGifts();
 
 /* ---------------- MODAL ---------------- */
 let cur = null, payload = "", tab = "pix";
-const val = () => cur.valor || Math.max(0, Math.round((+$("m-in").value || 0) * 100) / 100);
+const parseBRL = t => { t = String(t).replace(/[^0-9.,]/g,""); if (t.includes(",")) t = t.replace(/\./g,"").replace(",","."); return parseFloat(t) || 0; };
+const val = () => cur.valor || Math.max(0, Math.round(parseBRL($("m-in").value) * 100) / 100);
 function setTab(t){ tab = t; document.querySelectorAll(".ptabs button").forEach(b => b.classList.toggle("on", b.dataset.p === t));
   $("p-pix").hidden = t !== "pix"; $("p-cartao").hidden = t !== "cartao"; refresh(); }
 document.querySelector(".ptabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setTab(b.dataset.p); });
