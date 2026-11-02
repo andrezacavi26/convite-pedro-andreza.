@@ -548,7 +548,7 @@
 <footer>
   <p class="n">Pedro &amp; Andreza</p>
   <p>17 · 04 · 2027 — Cambé, Paraná</p>
-  <p style="opacity:.35;font-size:.55rem;margin-top:14px">v1520</p>
+  <p style="opacity:.35;font-size:.55rem;margin-top:14px">v1655</p>
 </footer>
 
 <!-- MODAL -->
@@ -810,7 +810,8 @@ async function carregarGrupo(){
   $("rsvp").hidden = true; $("grp-load").hidden = false;
   try {
     const r = await fetch("/api/rsvp?c=" + encodeURIComponent(CODIGO)); const d = await r.json();
-    if (!d.ok) throw new Error(d.erro);
+    if (!d.ok) throw new Error(d.erro || ("resposta " + r.status));
+    if (!Array.isArray(d.pessoas)) throw new Error("a planilha respondeu sem a lista de nomes — implantação antiga");
     GRUPO = d;
     $("grp-nome").textContent = d.convite;
     $("grp-list").innerHTML = d.pessoas.map(p => `<div class="grp-p" role="checkbox" tabindex="0" data-i="${p.i}"><span class="bx"></span><span></span><small></small></div>`).join("");
@@ -826,7 +827,12 @@ async function carregarGrupo(){
     const hp = document.querySelector("#confirmar .head p"); if (hp) hp.textContent = "Marque quem vai e toque em enviar. Leva menos de 1 minuto!";
     if (CONFIG.prazoRSVP){ $("prazo2").hidden = false; $("prazo2").textContent = "Por favor, confirme até " + CONFIG.prazoRSVP + "."; }
     $("grp").hidden = false;
-  } catch(_){ GRUPO = null; $("rsvp").hidden = false; }
+  } catch(err){
+    GRUPO = null; $("rsvp").hidden = false;
+    const n = document.createElement("p"); n.className = "note"; n.style.cssText = "color:#f2c9a8;margin:0 0 18px";
+    n.textContent = "Não conseguimos carregar os nomes do seu convite (" + (err && err.message || "erro") + "). Você pode confirmar pelo nome abaixo.";
+    $("rsvp").prepend(n);
+  }
   finally { $("grp-load").hidden = true; }
 }
 async function enviarGrupo(lista){
