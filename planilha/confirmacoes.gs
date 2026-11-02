@@ -1,77 +1,23 @@
 /**
- * Confirmações de presença – Casamento Pedro & Andreza  (versão com lista de convidados)
+ * Confirmações de presença – Casamento Pedro & Andreza
+ * Grava na planilha "Casamento | Pedro & Andreza" (abas Convidados, Resumo e Confirmações).
  *
- * ATUALIZAR (você já tem a planilha e a implantação):
+ * ATUALIZAR:
  * 1. Extensões › Apps Script: apague tudo, cole TODO este código e salve.
- * 2. No topo, escolha a função  criarListaConvidados  e clique em ▶ Executar  (uma vez só).
- *    → cria a aba "Convidados" (com o link de cada convite) e refaz a aba "Resumo".
+ * 2. Escolha a função  testeManual  e clique em ▶ Executar  → autorize o acesso à planilha.
  * 3. Implantar › Gerenciar implantações › lápis › Versão: "Nova versão" › Implantar.
- *    (o endereço /exec continua o mesmo)
  *
- * Na aba "Convidados" você pode trocar nomes ("Esposa", "Filha"…), mover pessoas de grupo
- * (mudando o Código) ou acrescentar linhas novas. Não apague a coluna Código.
+ * NÃO precisa rodar criarListaConvidados (a lista já está na aba Convidados).
  */
 
-const PLANILHA_ID = "";   // só preencha se o código NÃO estiver dentro da planilha
+const PLANILHA_ID = "1Ka0VuoH6MQSmbPERCW8zGhCVNWrV9lI0zEtB9zduH5g";   // planilha "Casamento | Pedro & Andreza"
 const SITE = "https://convite-pedro-andreza.vercel.app";
 
 const ABA = "Confirmações";             // confirmações feitas sem link personalizado
 const ABA_CONV = "Convidados";
 const PEND = "⏳ Pendente", VAI = "✅ Vai", NAO = "❌ Não vai";
 
-const LISTA = [
-  ["ana-alice-aff", "Ana Alice e Pai", ["Ana Alice", "Pai"]],
-  ["lorenzo-f32", "Lorenzo, Mariana, Helena e Andreyne", ["Lorenzo", "Mariana", "Helena", "Andreyne"]],
-  ["carol-564", "Carol, Tedesco, Martina e Ana Luiza", ["Carol", "Tedesco", "Martina", "Ana Luiza"]],
-  ["soraia-aba", "Soraia e Milton", ["Soraia", "Milton"]],
-  ["suellen-6e7", "Suellen, Sidney e Samir", ["Suellen", "Sidney", "Samir"]],
-  ["sandra-856", "Sandra, Farid e Mariana", ["Sandra", "Farid", "Mariana"]],
-  ["elo-bfb", "Elo e Marido Elo", ["Elo", "Marido Elo"]],
-  ["avo-07a", "Avó, Telina, Rodrigo, Enzo e Maria Valentina", ["Avó", "Telina", "Rodrigo", "Enzo", "Maria Valentina"]],
-  ["joao-victor-f37", "João Victor, Pollyane, Noah e Teodoro", ["João Victor", "Pollyane", "Noah", "Teodoro"]],
-  ["luana-ccb", "Luana, Julivan e Marcos Gregorio", ["Luana", "Julivan", "Marcos Gregorio"]],
-  ["lorena-e9e", "Lorena e Vinicius", ["Lorena", "Vinicius"]],
-  ["marilsa-3d7", "Tia Marilsa e Tio Mauri", ["Tia Marilsa", "Tio Mauri"]],
-  ["suzi-c6b", "Suzi e Dua", ["Suzi", "Dua"]],
-  ["samia-17a", "Samia, Samuel, Laura, Daniel e Camila", ["Samia", "Samuel", "Laura", "Daniel", "Camila"]],
-  ["gabriel-703", "Gabriel e Esposa", ["Gabriel", "Esposa"]],
-  ["laura-f4a", "Laura e Filha 1", ["Laura", "Filha 1"]],
-  ["pai-492", "Pai e Mãe", ["Pai", "Mãe"]],
-  ["nadir-ae8", "Tio Nadir", ["Tio Nadir"]],
-  ["chico-8f7", "Tio Chico", ["Tio Chico"]],
-  ["felipe-6de", "Felipe", ["Felipe"]],
-  ["rafa-bd2", "Rafa", ["Rafa"]],
-  ["franci-5ae", "Franci", ["Franci"]],
-  ["neide-3bf", "Vó Neide", ["Vó Neide"]],
-  ["ernesto-fd4", "Vó Ernesto e Vó Ema", ["Vó Ernesto", "Vó Ema"]],
-  ["mira-158", "Tio Mira e Tia Nice", ["Tio Mira", "Tia Nice"]],
-  ["damiao-4f4", "Tio Damião", ["Tio Damião"]],
-  ["marcos-76d", "Marcos e Letícia", ["Marcos", "Letícia"]],
-  ["valdir-a1b", "Tio Valdir e Tia Angela", ["Tio Valdir", "Tia Angela"]],
-  ["bruno-172", "Bruno e Adrieli", ["Bruno", "Adrieli"]],
-  ["fernando-832", "Fernando e Natália", ["Fernando", "Natália"]],
-  ["orandir-eac", "Tio Orandir e Tia Márcia", ["Tio Orandir", "Tia Márcia"]],
-  ["gustavo-ea1", "Gustavo e Daiane", ["Gustavo", "Daiane"]],
-  ["sandro-656", "Sandro", ["Sandro"]],
-  ["fia-73d", "Tia Fia", ["Tia Fia"]],
-  ["lurde-6c9", "Tia Lurde", ["Tia Lurde"]],
-  ["giovana-cf0", "Giovana e Danilo", ["Giovana", "Danilo"]],
-  ["suzan-279", "Suzan e Degan", ["Suzan", "Degan"]],
-  ["natalia-f95", "Natália e João (Natália)", ["Natália", "João (Natália)"]],
-  ["debora-123", "Débora e Daniel", ["Débora", "Daniel"]],
-  ["lorena-408", "Lorena e João Pedro", ["Lorena", "João Pedro"]],
-  ["halila-20c", "Halila", ["Halila"]],
-  ["renata-1e4", "Renata e Nick", ["Renata", "Nick"]],
-  ["larissa-10a", "Larissa e Beto", ["Larissa", "Beto"]],
-  ["lu-091", "Lu", ["Lu"]],
-  ["liandra-393", "Liandra", ["Liandra"]],
-  ["dona-aurea-6a7", "Dona Áurea", ["Dona Áurea"]],
-  ["mamau-18d", "Mamau e Esposa", ["Mamau", "Esposa"]],
-  ["marcos-785", "Marcos, Larissa e Esposa", ["Marcos", "Larissa", "Esposa"]],
-  ["nene-22c", "Nenê", ["Nenê"]],
-  ["monica-f6f", "Mônica", ["Mônica"]],
-  ["igual-d1a", "Igual, Esposa, Filha e Filha", ["Igual", "Esposa", "Filha", "Filha"]]
-];
+const LISTA = [];   // a lista agora fica na aba "Convidados" da planilha
 
 /* ---------------- utilidades ---------------- */
 function planilha_() {
