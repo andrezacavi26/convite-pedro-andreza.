@@ -18,5 +18,6 @@ Link personalizado por pessoa:
 Edite o bloco `CONFIG` no início do `<script>` de `site/index.html`:
 - `whatsapp`: número dos noivos (ex.: `5543999999999`)
 - `pixChave`, `pixNome`, `pixCidade`: dados do PIX
+- `cartaoLink`: link de pagamento com valor aberto (Mercado Pago, InfinitePay, PagSeguro…)
 - `prazoRSVP`: data limite para confirmar
 A lista `PRESENTES` e `HOTEIS` também fica ali.
